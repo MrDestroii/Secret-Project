@@ -1,0 +1,34 @@
+@import "assets/scss/index.scss";
+
+.auth-types {
+  @extend .d-flex;
+  background-color: $primary;
+}
+
+.auth-type-button {
+  @extend .btn, .btn-primary;
+  flex: 1;
+  border-radius: 0;
+  position: relative;
+  font-size: 22px;
+  box-shadow: none !important;
+}
+
+.auth-type-button:not(:last-child) {
+  margin-right: 1px;
+}
+
+.auth-type-button:not(:last-child)::after {
+  display: block;
+  content: "";
+  position: absolute;
+  right: -2px;
+  top: 5%;
+  height: 90%;
+  padding: 5px 0;
+  border: 0.5px solid #fff;
+}
+
+.auth-type-button-active {
+  @extend .btn-primary:not(:disabled):not(.disabled):active;
+}
