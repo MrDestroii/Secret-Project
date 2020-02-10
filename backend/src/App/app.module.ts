@@ -5,6 +5,7 @@ import { Module } from "@nestjs/common";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { TypeOrmModule } from "@nestjs/typeorm";
+import { ConfigModule } from '@nestjs/config';
 
 import { User } from "../User/user.entity";
 
@@ -21,7 +22,8 @@ import { User } from "../User/user.entity";
       database: "Xcart",
       entities: [User],
       synchronize: true
-    })
+    }),
+    ConfigModule.forRoot()
   ],
   controllers: [AppController],
   providers: [AppService]
