@@ -1,0 +1,11 @@
+@import "assets/scss/index.scss";
+
+.auth-wrapper {
+  @extend .d-flex, .align-items-center;
+  padding: 40px 0;
+  height: 100%;
+}
+
+.auth {
+  @extend .auth-form;
+}

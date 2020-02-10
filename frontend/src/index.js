@@ -6,12 +6,14 @@ import { ConnectedRouter } from "connected-react-router";
 
 import { store, history } from "store";
 
+import App from 'components/app/App'
+
 import * as serviceWorker from "./service/serviceWorker";
 
 ReactDOM.render(
   <Provider store={store}>
     <ConnectedRouter history={history}>
-      <div>hi</div>
+      <App />
     </ConnectedRouter>
   </Provider>,
   document.getElementById("root")
