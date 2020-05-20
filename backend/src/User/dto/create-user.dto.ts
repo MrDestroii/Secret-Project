@@ -13,5 +13,5 @@ export default class CreateUserDTO {
   readonly email: string;
 
   @IsNotEmpty()
-  readonly password: string;
+  password: string;
 }

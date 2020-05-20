@@ -14,7 +14,7 @@ export class AuthService {
 
   async validateUser(email: string, pass: string): Promise<any> {
     const user: User = await this.userService.findOneByEmail(email);
-    if (user.password === pass) {
+    if (await this.userService.comparePassword(pass, user.password)) {
       return user;
     } else {
       throw new HttpException("Bab Request", HttpStatus.BAD_REQUEST);
@@ -25,7 +25,7 @@ export class AuthService {
     const payload = { username: user.email, sub: user.password };
     return {
       user,
-      access_token: this.jwtService.sign(payload)
+      accessToken: this.jwtService.sign(payload)
     };
   }
 

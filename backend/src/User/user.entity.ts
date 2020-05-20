@@ -18,7 +18,7 @@ export class User {
     @Exclude({ toPlainOnly: true })
     password: string;
 
-    // toJSON() {
-    //   return classToPlain(this);
-    // }
+    toJSON() {
+      return classToPlain(this);
+    }
 }

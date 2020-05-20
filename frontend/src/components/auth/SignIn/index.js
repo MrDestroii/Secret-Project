@@ -1,13 +1,18 @@
 import React, { useState, useCallback } from "react";
+import { useDispatch } from "react-redux";
 
 import { Input } from "components/ui/Input";
 import { Button } from "components/ui/Button";
+
+import * as authActions from "store/auth/actions";
 
 import "./styles.scss";
 
 const SignIn = (props) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  const dispatch = useDispatch();
 
   const handleChangeEmail = useCallback(({ target: { value } }) => {
     setEmail(value);
@@ -18,8 +23,8 @@ const SignIn = (props) => {
   }, []);
 
   const handleOnLogin = useCallback(() => {
-    console.log("Login");
-  }, []);
+    dispatch(authActions.signIn({ email, password }));
+  }, [dispatch, email, password]);
 
   return (
     <div className="sign-in-wrapper">

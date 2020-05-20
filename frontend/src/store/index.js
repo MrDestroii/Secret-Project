@@ -4,7 +4,10 @@ import createSagaMiddleware from 'redux-saga'
 import { routerMiddleware, connectRouter } from 'connected-react-router'
 import { createBrowserHistory as createHistory } from 'history'
 
+import { authReducer } from './auth/reducer'
+
 import routerSaga from './router/saga'
+import { authSaga } from './auth/saga'
 
 const history = createHistory()
 
@@ -17,6 +20,7 @@ const middleware = [
 
 const reducers = combineReducers({
   router: connectRouter(history),
+  auth: authReducer
 })
 
 const store = applyMiddleware(...middleware)(createStore)(
@@ -25,6 +29,7 @@ const store = applyMiddleware(...middleware)(createStore)(
 )
 
 sagaMiddleware.run(routerSaga)
+sagaMiddleware.run(authSaga)
 
 export {
   store,
