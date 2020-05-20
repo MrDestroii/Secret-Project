@@ -1,0 +1,38 @@
+@import "assets/scss/index.scss";
+
+.ui-input-wrapper {
+  width: 100%;
+}
+
+.ui-input {
+  width: 100%;
+  border-radius: 3px;
+  border: 1px solid #0069d9;
+  padding: 2px 5px;
+  outline: none;
+
+  &:focus {
+    box-shadow: inset 0px 0px 3px 0.3px #0069d9;
+  }
+}
+
+.ui-input-main {
+  position: relative;
+}
+
+.ui-input-password {
+  padding-right: 25px;
+}
+
+.ui-hidding-password {
+  @extend .d-flex, .align-items-center;
+  
+  position: absolute;
+  right: 5px;
+  top: 0;
+  height: 100%;
+  & > svg {
+    height: 20px;
+    width: 20px;
+  }
+}

@@ -1,0 +1,10 @@
+@import "assets/scss/index.scss";
+
+.ui-button {
+  @extend .btn, .btn-primary;
+  
+  
+  &:focus {
+    box-shadow: none !important;
+  }
+}

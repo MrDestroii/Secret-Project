@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body } from '@nestjs/common';
+import { Controller, Get, Post, Body, UsePipes, ValidationPipe } from '@nestjs/common';
 import { UserService } from './user.service';
 import { User } from './user.entity';
 import CreateUserDTO from './dto/create-user.dto'
@@ -16,8 +16,10 @@ export class UserController {
     create(@Body() createUserDTO: CreateUserDTO) {
       return this.userService.create(createUserDTO);
     }
-
+    
+    
     @Get('email')
+    @UsePipes(new ValidationPipe({ transform: true }))
     findByEmail(@Body() { email }) {
       return this.userService.findOneByEmail(email)
     }

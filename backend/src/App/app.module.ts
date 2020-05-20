@@ -2,7 +2,6 @@ import { AuthService } from '../Auth/auth.service';
 import { AuthModule } from '../Auth/auth.module';
 import { UserModule } from "../User/user.module";
 import { Module } from "@nestjs/common";
-import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { ConfigModule } from '@nestjs/config';
@@ -19,13 +18,12 @@ import { User } from "../User/user.entity";
       port: 5432,
       username: "postgres",
       password: "qwerty",
-      database: "Xcart",
+      database: "secret-project",
       entities: [User],
       synchronize: true
     }),
     ConfigModule.forRoot()
   ],
-  controllers: [AppController],
   providers: [AppService]
 })
 export class AppModule {}
