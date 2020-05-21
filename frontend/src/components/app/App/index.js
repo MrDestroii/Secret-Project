@@ -1,15 +1,22 @@
-import React from 'react'
+import React, { useMemo } from "react";
+import { useSelector } from "react-redux";
 
-import Auth from 'components/auth/Auth'
+import { Auth } from "components/auth/Auth";
+import { Dashboard } from "components/dashboard/Dashboard";
 
-import './styles.scss'
+import { getIsLogged } from "store/auth/selectors";
 
-const App = props => {
+import "./styles.scss";
+
+const App = () => {
+  const isLogged = useSelector(getIsLogged);
+  const Content = useMemo(() => (isLogged ? Dashboard : Auth), [isLogged]);
+
   return (
     <div className="app">
-      <Auth />
+      <Content />
     </div>
-  )
-}
+  );
+};
 
-export default App
+export default App;
