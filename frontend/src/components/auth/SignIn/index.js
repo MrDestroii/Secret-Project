@@ -8,23 +8,24 @@ import * as authActions from "store/auth/actions";
 
 import "./styles.scss";
 
-const SignIn = (props) => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+const SignIn = () => {
+  const [data, setData] = useState({
+    email: '',
+    password: ''
+  });
 
   const dispatch = useDispatch();
 
-  const handleChangeEmail = useCallback(({ target: { value } }) => {
-    setEmail(value);
-  }, []);
-
-  const handleChangePassword = useCallback(({ target: { value } }) => {
-    setPassword(value);
-  }, []);
+  const handleChangeSignInData = useCallback((fieldName) => ({ target: { value } }) => {
+    setData({
+      ...data,
+      [fieldName]: value
+    })
+  }, [data]);
 
   const handleOnLogin = useCallback(() => {
-    dispatch(authActions.signIn({ email, password }));
-  }, [dispatch, email, password]);
+    dispatch(authActions.signIn(data));
+  }, [dispatch, data]);
 
   return (
     <div className="sign-in-wrapper">
@@ -32,15 +33,17 @@ const SignIn = (props) => {
         <Input
           label="E-mail"
           placeholder="E-mail"
-          value={email}
-          onChange={handleChangeEmail}
+          name="email-signin"
+          value={data.email}
+          onChange={handleChangeSignInData('email')}
         />
         <Input
           type="password"
           label="Password"
           placeholder="Password"
-          value={password}
-          onChange={handleChangePassword}
+          name="password-signin"
+          value={data.password}
+          onChange={handleChangeSignInData('password')}
         />
       </div>
       <Button title="Sign In" onClick={handleOnLogin} />

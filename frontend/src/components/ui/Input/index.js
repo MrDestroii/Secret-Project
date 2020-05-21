@@ -10,7 +10,7 @@ import { HiddingPassword } from "./HiddingPassword";
 import "./styles.scss";
 
 export const Input = (props) => {
-  const { label, placeholder, value, onChange, type, classes } = props;
+  const { label, placeholder, value, onChange, type, classes, name } = props;
 
   const [isHiddenPassword, setIsHiddenPassword] = useState(true);
 
@@ -68,6 +68,7 @@ export const Input = (props) => {
       <div className="ui-input-main">
         <input
           type={currentType}
+          name={name}
           className={classNameInput}
           placeholder={placeholder}
           value={value}
@@ -82,6 +83,7 @@ export const Input = (props) => {
 Input.propTypes = {
   label: PropsTypes.string,
   placeholder: PropsTypes.string,
+  name: PropsTypes.string,
   value: PropsTypes.string,
   onChange: PropsTypes.func.isRequired,
   type: PropsTypes.oneOf(["text", "password"]),
