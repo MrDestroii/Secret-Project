@@ -8,6 +8,8 @@ import { Auth } from "components/auth/Auth";
 import { Dashboard } from "components/dashboard/Dashboard";
 import { PageNotFound } from "components/app/PageNotFound";
 
+import { routes, authRoute } from "helpers/route";
+
 import { getIsLogged } from "store/auth/selectors";
 
 import "./styles.scss";
@@ -19,12 +21,14 @@ const App = () => {
     () =>
       isLogged
         ? {
-            route: <Route path="/dashboard" component={Dashboard} />,
-            redirectRoutes: ["/auth/signin"],
+            route: <Route path={routes.dashboard} component={Dashboard} />,
+            redirectRoutes: [authRoute.signIn.path(), authRoute.signUp.path()],
+            routeRedirect: routes.dashboard,
           }
         : {
-            route: <Route path="/auth/:type" component={Auth} />,
-            redirectRoutes: ["/dashboard"],
+            route: <Route path={authRoute.template} component={Auth} />,
+            redirectRoutes: [routes.dashboard],
+            routeRedirect: authRoute.signIn.path(),
           },
     [isLogged]
   );
@@ -34,10 +38,11 @@ const App = () => {
       <Switch>
         <Route
           exact
-          path={R.concat(["/", "/auth"], currentOptions.redirectRoutes)}
-          render={() => (
-            <Redirect to={isLogged ? "/dashboard" : "/auth/signin"} />
+          path={R.concat(
+            [routes.main, authRoute.main],
+            currentOptions.redirectRoutes
           )}
+          render={() => <Redirect to={currentOptions.routeRedirect} />}
         />
         {currentOptions.route}
         <Route component={PageNotFound} />

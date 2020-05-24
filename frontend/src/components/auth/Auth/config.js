@@ -1,13 +1,15 @@
-import SignIn from 'components/auth/SignIn'
-import SignUp from 'components/auth/SignUp'
+import SignIn from "components/auth/SignIn";
+import SignUp from "components/auth/SignUp";
+
+import { routes, authRoute } from "helpers/route";
 
 export const types = {
-  signin: {
+  [authRoute.signIn.param]: {
     text: "Sign In",
-    component: SignIn
+    component: SignIn,
   },
-  signup: {
+  [authRoute.signUp.param]: {
     text: "Sign Up",
-    component: SignUp
-  }
+    component: SignUp,
+  },
 };

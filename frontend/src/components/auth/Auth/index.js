@@ -19,7 +19,7 @@ export const Auth = () => {
 
   const handleChangeType = useCallback(
     (value) => () => {
-      dispatch(routerActions.push(`/auth/${value}`));
+      dispatch(routerActions.push(value));
     },
     [dispatch]
   );
