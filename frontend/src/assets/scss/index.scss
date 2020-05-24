@@ -24,3 +24,16 @@
     margin-left: #{$i}px;
   }
 }
+
+@for $i from 1 through 30 {
+  .fs-#{$i} { 
+    font-size: #{$i}px;
+  }
+}
+
+@for $i from 1 through 9 {
+  $value: $i*100;
+  .fw-#{$value} { 
+    font-weight: $value;
+  }
+}

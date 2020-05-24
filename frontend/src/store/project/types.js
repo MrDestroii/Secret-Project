@@ -1,0 +1,4 @@
+export const projectTypes = {
+  PROJECTS_GET: 'API:PROJECTS_GET',
+  PROJECTS_GET_SUCCESS: 'PROJECTS_GET_SUCCESS',
+}
