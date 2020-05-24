@@ -1,0 +1,14 @@
+@import "assets/scss/index.scss";
+
+.sign-in-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.sign-in-inputs {
+  @extend .mt-15, .mb-15;
+}
+
+.sign-in-has-email {
+  cursor: pointer;
+}
