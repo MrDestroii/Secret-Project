@@ -2,11 +2,11 @@ import SignIn from 'components/auth/SignIn'
 import SignUp from 'components/auth/SignUp'
 
 export const types = {
-  login: {
+  signin: {
     text: "Sign In",
     component: SignIn
   },
-  registration: {
+  signup: {
     text: "Sign Up",
     component: SignUp
   }

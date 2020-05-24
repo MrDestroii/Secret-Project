@@ -1,6 +1,9 @@
 import types from "./types";
 
-export const push = path => ({
+export const push = (path, state) => ({
   type: types.PUSH,
-  payload: path
+  payload: {
+    path,
+    state,
+  },
 });

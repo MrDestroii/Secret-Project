@@ -4,7 +4,8 @@ import { push } from 'connected-react-router'
 import types from './types'
 
 export function* routerPush(action) {
-  yield put(push(action.payload))
+  const { path, state } = action.payload
+  yield put(push(path, state))
 }
 
 function* routerSaga() {

@@ -1,21 +1,27 @@
-import React, { useState, useCallback, useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
+import { useParams } from "react-router";
+import { useDispatch } from "react-redux";
 
 import * as R from "ramda";
 
 import TypesAuth from "./TypesAuth";
 
+import * as routerActions from "store/router/actions";
+
 import { types } from "./config";
 
 import "./styles.scss";
 
-export const Auth = (props) => {
-  const [type, setType] = useState("login");
+export const Auth = () => {
+  const dispatch = useDispatch();
+
+  const { type } = useParams();
 
   const handleChangeType = useCallback(
     (value) => () => {
-      setType(value);
+      dispatch(routerActions.push(`/auth/${value}`));
     },
-    []
+    [dispatch]
   );
 
   const Content = useMemo(() => R.path([type, "component"], types), [type]);
@@ -29,3 +35,5 @@ export const Auth = (props) => {
     </div>
   );
 };
+
+export default Auth;

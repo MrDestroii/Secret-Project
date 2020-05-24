@@ -1,0 +1,9 @@
+@import "assets/scss/index.scss";
+
+.page-not-found-wrapper {
+  @extend .d-flex, .flex-column, .align-items-center;
+
+  & > .page-not-found-text {
+    @extend .mb-20;
+  }
+}
