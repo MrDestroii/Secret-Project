@@ -1,7 +1,7 @@
 import SignIn from "components/auth/SignIn";
 import SignUp from "components/auth/SignUp";
 
-import { routes, authRoute } from "helpers/route";
+import { authRoute } from "helpers/route";
 
 export const types = {
   [authRoute.signIn.param]: {

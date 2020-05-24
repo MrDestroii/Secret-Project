@@ -3,6 +3,7 @@ import { storage } from "utils/storage";
 
 const initialState = {
   user: {},
+  signUp: {},
   isLogged: storage("accessToken").has(),
 };
 
@@ -14,7 +15,20 @@ export const authReducer = (state = initialState, action) => {
         ...state,
         user,
         isLogged: true,
+        signUp: initialState.signUp
       };
+    }
+
+    case authTypes.AUTH_SIGN_UP_SUCCESS: {
+      const { email } = action.payload
+
+      return {
+        ...state,
+        signUp: {
+          ...state.signUp,
+          email
+        }
+      }
     }
 
     case authTypes.AUTH_LOGOUT: {

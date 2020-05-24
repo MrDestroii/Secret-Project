@@ -31,9 +31,11 @@ const basic = (url, method, data) => {
 };
 
 export const api = {
-  auth: (data) => basic("/auth/login", "post", data),
   post: (url, data) => basic(`${url}`, "post", data),
   get: (url) => basic(`${url}`, "get"),
   delete: (url) => basic(`${url}`, "delete"),
   put: (url, data) => basic(`${url}`, "put", data),
+  auth(data, url = "login") {
+    return this.post(`/auth/${url}`, data)
+  },
 };

@@ -8,3 +8,7 @@
 .sign-in-inputs {
   @extend .mt-15, .mb-15;
 }
+
+.sign-in-has-email {
+  cursor: pointer;
+}

@@ -2,7 +2,7 @@ import { Injectable, HttpException, HttpStatus } from "@nestjs/common";
 import { UserService } from "../User/user.service";
 import { JwtService } from "@nestjs/jwt";
 import CreateUserDTO from "src/User/dto/create-user.dto";
-import * as R from 'ramda'
+import * as R from "ramda";
 import { User } from "src/User/user.entity";
 
 @Injectable()
@@ -25,12 +25,22 @@ export class AuthService {
     const payload = { username: user.email, sub: user.password };
     return {
       user,
-      accessToken: this.jwtService.sign(payload)
+      accessToken: this.jwtService.sign(payload),
     };
   }
 
   async register(createUserDTO: CreateUserDTO) {
-    const newUser = await this.userService.create(createUserDTO)
-    return newUser
+    try {
+      const newUser = await this.userService.create(createUserDTO);
+      return newUser;
+    } catch (e) {
+      if (R.compose(R.propEq("code", "23505"))(e)) {
+        throw new HttpException(
+          `User with email - ${createUserDTO.email} already exist`,
+          HttpStatus.BAD_REQUEST
+        );
+      }
+      throw new HttpException("Bab Request", HttpStatus.BAD_REQUEST);
+    }
   }
 }
