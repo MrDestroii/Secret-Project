@@ -1,0 +1,15 @@
+.ui-actions-wrapper {
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+
+.ui-actions-icon {
+  height: 15px;
+  width: 15px;
+  cursor: pointer;
+
+  &:not(:last-child) {
+    margin-right: 10px;
+  }
+}

@@ -1,0 +1,9 @@
+.project-list-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 15px 10px 0;
+
+  &:not(:last-child) {
+    border-bottom: 1px solid #0dc5c1;
+  }
+}

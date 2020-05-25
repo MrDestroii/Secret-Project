@@ -1,15 +1,60 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useState, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
+import PropTypes from "prop-types";
+import moment from "moment";
 import * as R from "ramda";
 
 import { Panel } from "components/ui/Panel";
 import { Spinner } from "components/ui/Spinner";
+import { Actions } from "components/ui/Actions";
 
 import * as projectActions from "store/project/actions";
 import { getItems, getIsGetFetching } from "store/project/selectors";
 
-export const ProjectsList = (props) => {
+import "./styles.scss";
+
+const ListItem = (props) => {
+  const { project } = props;
+
+  const [isOpenActions, setIsOpenActions] = useState(false);
+
+  const createdAtFormatted = useMemo(
+    () => moment(project.createdAt).format("lll"),
+    [project.createdAt]
+  );
+
+  const handleMouseOver = useCallback(() => {
+    setIsOpenActions(!isOpenActions);
+  }, [isOpenActions]);
+
+  const handleClickEdit = useCallback(() => {
+    console.log("edit");
+  }, []);
+
+  const handleClickClose = useCallback(() => {
+    console.log("close");
+  }, []);
+
+  return (
+    <div
+      className="project-list-item"
+      onMouseEnter={handleMouseOver}
+      onMouseLeave={handleMouseOver}
+    >
+      <span>{project.name}</span>
+      <span>{project.user.name}</span>
+      <span>{createdAtFormatted}</span>
+      <Actions
+        isOpen={isOpenActions}
+        onClickEdit={handleClickEdit}
+        onClickClose={handleClickClose}
+      />
+    </div>
+  );
+};
+
+export const ProjectsList = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -23,33 +68,28 @@ export const ProjectsList = (props) => {
     return isGetFetching ? (
       <Spinner />
     ) : (
-      <div>
-        <table>
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Created By</th>
-              <th>Created</th>
-            </tr>
-          </thead>
-          <tbody>
-            {R.compose(
-              R.map((project) => {
-                return (
-                  <tr>
-                    <td>{project.name}</td>
-                    <td>{project.user.name}</td>
-                    <td>{project.createdAt}</td>
-                  </tr>
-                );
-              }),
-              R.values
-            )(items)}
-          </tbody>
-        </table>
-      </div>
+      <>
+        {R.compose(
+          R.map((project) => {
+            return <ListItem key={project.id} project={project} />;
+          }),
+          R.values
+        )(items)}
+      </>
     );
-  }, [isGetFetching]);
+  }, [isGetFetching, items]);
 
   return <Panel title="Projects">{rendererContent}</Panel>;
+};
+
+ListItem.propTypes = {
+  project: PropTypes.shape({
+    name: PropTypes.string,
+    user: PropTypes.shape({
+      name: PropTypes.string,
+      email: PropTypes.string,
+    }),
+    createdAt: PropTypes.string,
+    updatedAt: PropTypes.string,
+  }),
 };
