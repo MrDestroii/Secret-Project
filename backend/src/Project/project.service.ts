@@ -6,6 +6,7 @@ import { User } from "src/User/user.entity";
 import { Project } from "./project.entity";
 import { ProjectRepository } from "./project.repository";
 import CreateProjectDTO from "./dto/create-project.dto";
+import { DeleteResult } from "typeorm";
 
 @Injectable()
 export class ProjectService {
@@ -29,5 +30,9 @@ export class ProjectService {
       user
     });
     return this.projectRepository.save(createdProjectEntity)
+  }
+
+  remove(id: string): Promise<DeleteResult> {
+    return this.projectRepository.delete(id);
   }
 }

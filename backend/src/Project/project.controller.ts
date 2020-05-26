@@ -1,4 +1,4 @@
-import { Controller, Get, UseGuards, Request, Post, Body } from "@nestjs/common";
+import { Controller, Get, UseGuards, Request, Post, Body, Delete } from "@nestjs/common";
 
 import { JwtAuthGuard } from "src/Auth/jwt-auth.guard";
 
@@ -23,5 +23,11 @@ export class ProjectController {
   @Post("create")
   create(@Body() body: CreateProjectDTO, @Request() req: { user: User}) {
     return this.projectService.create(body, req.user)
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Delete("remove")
+  remove(@Body() body: { id: string }) {
+    return this.projectService.remove(body.id)
   }
 }

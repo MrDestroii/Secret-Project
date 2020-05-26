@@ -1,4 +1,10 @@
-import React, { useEffect, useMemo, useState, useCallback } from "react";
+import React, {
+  useEffect,
+  useMemo,
+  useState,
+  useCallback,
+  useRef,
+} from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import PropTypes from "prop-types";
@@ -8,6 +14,8 @@ import * as R from "ramda";
 import { Panel } from "components/ui/Panel";
 import { Spinner } from "components/ui/Spinner";
 import { Actions } from "components/ui/Actions";
+
+import { ButtonCreate } from "./ButtonCreate";
 
 import * as projectActions from "store/project/actions";
 import { getItems, getIsGetFetching } from "store/project/selectors";
@@ -55,6 +63,8 @@ const ListItem = (props) => {
 };
 
 export const ProjectsList = () => {
+  const refPanel = useRef();
+
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -79,7 +89,18 @@ export const ProjectsList = () => {
     );
   }, [isGetFetching, items]);
 
-  return <Panel title="Projects">{rendererContent}</Panel>;
+  return (
+    <Panel
+      refWrapper={refPanel}
+      title="Projects"
+      headerContent={<ButtonCreate refElem={refPanel} />}
+      classes={{
+        header: 'project-list-header'
+      }}
+    >
+      {rendererContent}
+    </Panel>
+  );
 };
 
 ListItem.propTypes = {

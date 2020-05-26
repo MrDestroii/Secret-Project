@@ -7,3 +7,12 @@
     border-bottom: 1px solid #0dc5c1;
   }
 }
+
+.project-list-header {
+  display: flex;
+  align-items: center;
+
+  & > .ui-panel-header-title {
+    margin-right: 10px;
+  }
+}

@@ -31,7 +31,7 @@ const CollapseButton = (props) => {
 };
 
 export const Panel = (props) => {
-  const { children, title, headerContent } = props;
+  const { children, title, headerContent, refWrapper, classes } = props;
 
   const [isOpen, setIsOpen] = useState(true);
   const previousIsOpen = usePrevious(isOpen);
@@ -53,15 +53,15 @@ export const Panel = (props) => {
 
   const rendererHeader = useMemo(() => {
     return title || headerContent ? (
-      <div className="ui-panel-header">
+      <div className={classNames("ui-panel-header", classes.header)}>
         <Title text={title} />
         {headerContent}
       </div>
     ) : null;
-  }, [title, headerContent]);
+  }, [title, headerContent, classes.header]);
 
   return (
-    <div className="ui-panel-wrapper">
+    <div ref={refWrapper} className="ui-panel-wrapper">
       <CollapseButton isOpen={isOpen} onClick={handleChangeIsOpen} />
       {rendererHeader}
       <animated.div className="ui-panel-body" style={{ height: currentHeight }}>
@@ -75,7 +75,16 @@ Panel.propTypes = {
   title: PropTypes.string,
   headerContent: PropTypes.node,
   children: PropTypes.node.isRequired,
+  refWrapper: PropTypes.oneOfType([
+    PropTypes.func,
+    PropTypes.shape({ current: PropTypes.instanceOf(Element)})
+  ]),
+  classes: PropTypes.shape({ header: PropTypes.string })
 };
+
+Panel.defaultProps = {
+  classes: {}
+}
 
 Title.propTypes = {
   text: PropTypes.string,
