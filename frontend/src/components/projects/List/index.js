@@ -14,13 +14,19 @@ import * as R from "ramda";
 import { Panel } from "components/ui/Panel";
 import { Spinner } from "components/ui/Spinner";
 import { Actions } from "components/ui/Actions";
+import { Modal } from "components/ui/Modal";
 
 import { ButtonCreate } from "./ButtonCreate";
 
 import * as projectActions from "store/project/actions";
-import { getItems, getIsGetFetching } from "store/project/selectors";
+import {
+  getItems,
+  getIsGetFetching,
+  getIsCreateFetching,
+} from "store/project/selectors";
 
 import "./styles.scss";
+import { CreateForm } from "../CreateForm";
 
 const ListItem = (props) => {
   const { project } = props;
@@ -64,6 +70,7 @@ const ListItem = (props) => {
 
 export const ProjectsList = () => {
   const refPanel = useRef();
+  const refButtonCreate = useRef();
 
   const dispatch = useDispatch();
 
@@ -72,20 +79,21 @@ export const ProjectsList = () => {
   }, [dispatch]);
 
   const isGetFetching = useSelector(getIsGetFetching);
+  const isCreateFetching = useSelector(getIsCreateFetching);
   const items = useSelector(getItems);
 
   const rendererContent = useMemo(() => {
     return isGetFetching ? (
       <Spinner />
     ) : (
-      <>
+      <div>
         {R.compose(
           R.map((project) => {
             return <ListItem key={project.id} project={project} />;
           }),
           R.values
         )(items)}
-      </>
+      </div>
     );
   }, [isGetFetching, items]);
 
@@ -93,12 +101,24 @@ export const ProjectsList = () => {
     <Panel
       refWrapper={refPanel}
       title="Projects"
-      headerContent={<ButtonCreate refElem={refPanel} />}
+      headerContent={
+        <ButtonCreate refElem={refPanel} refButton={refButtonCreate} />
+      }
       classes={{
-        header: 'project-list-header'
+        header: "project-list-header",
       }}
     >
       {rendererContent}
+      <Modal refButton={refButtonCreate} title="Create Project">
+        {(onChangeOpen) => (
+          <CreateForm
+            onCreate={(data) => {
+              dispatch(projectActions.createProject(data, onChangeOpen));
+            }}
+            isCreateFetching={isCreateFetching}
+          />
+        )}
+      </Modal>
     </Panel>
   );
 };

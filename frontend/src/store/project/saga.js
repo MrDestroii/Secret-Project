@@ -5,7 +5,7 @@ import { api } from "utils/api";
 import { projectTypes } from "./types";
 import * as projectActions from "./actions";
 
-function* getProjects(action) {
+function* getProjects() {
   try {
     const projects = yield api.get("/project/find");
 
@@ -15,6 +15,20 @@ function* getProjects(action) {
   }
 }
 
+function* createProject(action) {
+  try {
+    const { data, callback } = action.payload;
+    const createdProject = yield api.post("/project/create", data)
+
+    yield put(projectActions.createProjectSuccess(createdProject))
+
+    callback && callback()
+  } catch (e) {
+    console.log({ e });
+  }
+}
+
 export function* projectSaga() {
   yield takeEvery(projectTypes.PROJECTS_GET, getProjects);
+  yield takeEvery(projectTypes.PROJECT_CREATE, createProject);
 }

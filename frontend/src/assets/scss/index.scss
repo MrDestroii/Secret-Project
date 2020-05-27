@@ -1,4 +1,4 @@
-@import '~bootstrap/scss/bootstrap';
+@import "~bootstrap/scss/bootstrap";
 
 .auth-form {
   width: 100%;
@@ -7,33 +7,42 @@
   margin: auto;
 }
 
-@for $i from 1 through 20 {
-  .mt-#{$i} { 
+@for $i from 1 through 30 {
+  .fs-#{$i} {
+    font-size: #{$i}px;
+  }
+
+  .lh-#{$i} {
+    line-height: #{$i}px;
+  }
+
+  .mt-#{$i} {
     margin-top: #{$i}px;
   }
 
-  .mr-#{$i} { 
+  .mr-#{$i} {
     margin-right: #{$i}px;
   }
 
-  .mb-#{$i} { 
+  .mb-#{$i} {
     margin-bottom: #{$i}px;
   }
 
-  .ml-#{$i} { 
+  .ml-#{$i} {
     margin-left: #{$i}px;
   }
 }
 
-@for $i from 1 through 30 {
-  .fs-#{$i} { 
-    font-size: #{$i}px;
+@for $i from 1 through 9 {
+  $value: $i * 100;
+  .fw-#{$value} {
+    font-weight: $value;
   }
 }
 
-@for $i from 1 through 9 {
-  $value: $i*100;
-  .fw-#{$value} { 
-    font-weight: $value;
-  }
+.panel {
+  background-color: $white;
+  box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 3px;
+  padding: 10px 20px;
 }

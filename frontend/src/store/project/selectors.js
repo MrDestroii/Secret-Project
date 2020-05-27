@@ -11,3 +11,7 @@ export const getItems = createSelector(getState, (state) =>
 export const getIsGetFetching = createSelector(getState, (state) =>
   R.prop("isGetFetching", state)
 );
+
+export const getIsCreateFetching = createSelector(getState, (state) =>
+  R.prop("isCreateFetching", state)
+);

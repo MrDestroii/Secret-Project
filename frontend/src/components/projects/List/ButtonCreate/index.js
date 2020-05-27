@@ -9,7 +9,7 @@ import { ReactComponent as IconPlus } from "assets/icons/plus.svg";
 import "./styles.scss";
 
 export const ButtonCreate = (props) => {
-  const { onClick, refElem } = props;
+  const { onClick, refElem, refButton } = props;
 
   const timer = useRef();
 
@@ -46,7 +46,11 @@ export const ButtonCreate = (props) => {
 
   return (
     <animated.div style={{ transform }} className="button-create-wrapper">
-      <IconPlus className="button-create-icon" onClick={onClick} />
+      <IconPlus
+        ref={refButton}
+        className="button-create-icon"
+        onClick={onClick}
+      />
     </animated.div>
   );
 };
@@ -54,6 +58,10 @@ export const ButtonCreate = (props) => {
 ButtonCreate.propTypes = {
   onClick: PropTypes.func,
   refElem: PropTypes.oneOfType([
+    PropTypes.func,
+    PropTypes.shape({ current: PropTypes.instanceOf(Element) }),
+  ]),
+  refButton: PropTypes.oneOfType([
     PropTypes.func,
     PropTypes.shape({ current: PropTypes.instanceOf(Element) }),
   ]),

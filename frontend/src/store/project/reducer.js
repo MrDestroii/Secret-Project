@@ -5,6 +5,7 @@ import * as R from "ramda";
 const initialState = {
   items: {},
   isGetFetching: false,
+  isCreateFetching: false
 };
 
 export const projectReducer = (state = initialState, action) => {
@@ -23,6 +24,28 @@ export const projectReducer = (state = initialState, action) => {
         items,
         isGetFetching: false
       };
+    }
+
+    case projectTypes.PROJECT_CREATE: {
+      return {
+        ...state,
+        isCreateFetching: true
+      }
+    }
+
+    case projectTypes.PROJECT_CREATE_SUCCESS: {
+      const newProject = action.payload
+      
+      return {
+        ...state,
+        items: {
+          ...state.items,
+          [newProject.id]: {
+            ...newProject
+          }
+        },
+        isCreateFetching: false
+      }
     }
 
     default:

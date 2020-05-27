@@ -1,0 +1,30 @@
+@import "assets/scss/index.scss";
+
+.ui-modal-wrapper {
+  @extend .d-flex, .align-items-center, .justify-content-center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.ui-modal-wrapper-dialog {
+  @extend .panel;
+  position: relative;
+  padding: 20px 30px;
+}
+
+.ui-modal-close-icon {
+  position: absolute;
+  cursor: pointer;
+  height: 15px;
+  width: 15px;
+  right: 5px;
+  top: 5px;
+}
+
+.ui-modal-title-text {
+  @extend .fs-20, .fw-500, .lh-20;
+}

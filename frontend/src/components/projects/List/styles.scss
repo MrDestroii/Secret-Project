@@ -1,6 +1,7 @@
+@import "assets/scss/index.scss";
+
 .project-list-item {
-  display: flex;
-  justify-content: space-between;
+  @extend .d-flex, .justify-content-between;
   padding: 10px 15px 10px 0;
 
   &:not(:last-child) {
@@ -9,10 +10,9 @@
 }
 
 .project-list-header {
-  display: flex;
-  align-items: center;
+  @extend .d-flex, .align-items-center;
 
   & > .ui-panel-header-title {
-    margin-right: 10px;
+    @extend .mr-10;
   }
 }

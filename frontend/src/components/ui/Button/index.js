@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useCallback } from "react";
 
 import * as R from "ramda";
 
@@ -8,7 +8,7 @@ import classNames from "classnames";
 import "./styles.scss";
 
 export const Button = (props) => {
-  const { title, onClick, classes } = props;
+  const { title, onClick, classes, isDisable } = props;
 
   const currentClasses = useMemo(() => {
     return R.merge(Button.defaultProps.classes, classes);
@@ -23,9 +23,19 @@ export const Button = (props) => {
     [currentClasses.button]
   );
 
+  const handleClick = useCallback(() => {
+    if (!isDisable) {
+      onClick();
+    }
+  }, [isDisable, onClick]);
+
   return (
     <div className={classNameWrapper}>
-      <button className={classNameButton} onClick={onClick}>
+      <button
+        className={classNameButton}
+        onClick={handleClick}
+        disabled={isDisable}
+      >
         {title}
       </button>
     </div>
@@ -39,6 +49,7 @@ Button.propTypes = {
     wrapper: PropTypes.string,
     button: PropTypes.string,
   }),
+  isDisable: PropTypes.bool,
 };
 
 Button.defaultProps = {
