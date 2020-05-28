@@ -1,8 +1,13 @@
 import axios from "axios";
 import * as R from "ramda";
 
-import { storage } from "./storage";
 import { oneInspectTrue } from "helpers/tools";
+import { store } from "store/index";
+
+import * as authActions from 'store/auth/actions'
+import * as authSelectors from 'store/auth/selectors'
+
+import { storage } from "./storage";
 
 const apiUrl = process.env.REACT_APP_API_URL;
 
@@ -30,7 +35,15 @@ const basic = (url, method, data, params) => {
       data,
       params,
     })
-    .then((response) => response.data);
+    .then((response) => response.data)
+    .catch(e => {
+      const isLogged = authSelectors.getIsLogged(store.getState())
+      const isUnauthorized = R.compose(R.equals('Unauthorized'), R.path(['response', 'data', 'error']))(e)
+
+      if(isLogged && isUnauthorized) {
+        store.dispatch(authActions.logout())
+      }
+    });
 };
 
 export const api = {
