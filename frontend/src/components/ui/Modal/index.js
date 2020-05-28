@@ -1,7 +1,6 @@
-import React, { useState, useCallback, useEffect, memo } from "react";
+import React, { useState, useCallback, useEffect, memo, useRef } from "react";
 
 import PropTypes from "prop-types";
-import * as R from 'ramda'
 
 import { ReactComponent as IconClose } from "assets/icons/close.svg";
 
@@ -19,12 +18,24 @@ const Title = memo((props) => {
 
 export const Modal = (props) => {
   const { children, refButton, title } = props;
+  const wrapperRef = useRef();
 
   const [isOpen, setIsOpen] = useState();
 
   const handleChangeIsOpen = useCallback(() => {
     setIsOpen(!isOpen);
   }, [isOpen]);
+
+  const handleClickWithoutDialog = useCallback(
+    ({ target }) => {
+      const isClickOnWrapper = wrapperRef.current.isEqualNode(target);
+
+      if (isClickOnWrapper) {
+        handleChangeIsOpen();
+      }
+    },
+    [handleChangeIsOpen]
+  );
 
   useEffect(() => {
     const elem = refButton.current;
@@ -34,8 +45,12 @@ export const Modal = (props) => {
   }, [handleChangeIsOpen, refButton]);
 
   return isOpen ? (
-    <div className="ui-modal-wrapper">
-      <div className="ui-modal-wrapper-dialog">
+    <div
+      className="ui-modal-wrapper"
+      ref={wrapperRef}
+      onClick={handleClickWithoutDialog}
+    >
+      <div className="ui-modal-dialog">
         <IconClose
           className="ui-modal-close-icon"
           onClick={handleChangeIsOpen}
@@ -57,5 +72,5 @@ Modal.propTypes = {
 };
 
 Title.propTypes = {
-  text: PropTypes.string
-}
+  text: PropTypes.string,
+};
