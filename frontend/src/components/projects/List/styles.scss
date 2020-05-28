@@ -1,9 +1,7 @@
 @import "assets/scss/index.scss";
 
 .project-list-item {
-  @extend .d-flex, .justify-content-between;
-  padding: 10px 15px 10px 0;
-
+  height: 40px;
   &:not(:last-child) {
     border-bottom: 1px solid #0dc5c1;
   }
@@ -15,4 +13,8 @@
   & > .ui-panel-header-title {
     @extend .mr-10;
   }
+}
+
+.project-list-table {
+  width: 100%;
 }

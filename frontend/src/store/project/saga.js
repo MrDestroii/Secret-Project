@@ -7,7 +7,7 @@ import * as projectActions from "./actions";
 
 function* getProjects() {
   try {
-    const projects = yield api.get("/project/find");
+    const projects = yield api.service('project').find();
 
     yield put(projectActions.getProjectsSuccess(projects));
   } catch (e) {
@@ -18,7 +18,7 @@ function* getProjects() {
 function* createProject(action) {
   try {
     const { data, callback } = action.payload;
-    const createdProject = yield api.post("/project/create", data)
+    const createdProject = yield api.service('project').create(data)
 
     yield put(projectActions.createProjectSuccess(createdProject))
 
@@ -28,7 +28,20 @@ function* createProject(action) {
   }
 }
 
+function* deleteProject(action) {
+  try {
+    const id = action.payload;
+
+    const deletedProject = yield api.service('project').remove({ id })
+
+    yield put(projectActions.deleteProjectSuccess(deletedProject))
+  } catch (e) {
+    console.log({ e })
+  }
+}
+
 export function* projectSaga() {
   yield takeEvery(projectTypes.PROJECTS_GET, getProjects);
   yield takeEvery(projectTypes.PROJECT_CREATE, createProject);
+  yield takeEvery(projectTypes.PROJECT_DELETE, deleteProject);
 }

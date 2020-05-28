@@ -7,6 +7,7 @@ import { Project } from "./project.entity";
 import { ProjectRepository } from "./project.repository";
 import CreateProjectDTO from "./dto/create-project.dto";
 import { DeleteResult } from "typeorm";
+import { throws } from "assert";
 
 @Injectable()
 export class ProjectService {
@@ -32,7 +33,15 @@ export class ProjectService {
     return this.projectRepository.save(createdProjectEntity)
   }
 
-  remove(id: string): Promise<DeleteResult> {
-    return this.projectRepository.delete(id);
+  async remove(id: string): Promise<Project> {
+    const currentProject = await this.projectRepository.findOne(id)
+    
+    if(currentProject) {
+      const removedProject = await this.projectRepository.remove(currentProject)
+      return {
+        ...removedProject,
+        id
+      }
+    }
   }
 }

@@ -10,7 +10,7 @@ import { authTypes } from "./types";
 
 function* signIn(action) {
   try {
-    const dataAuth = yield api.auth(action.payload);
+    const dataAuth = yield api.auth.login(action.payload)
 
     const { accessToken, user } = dataAuth;
 
@@ -25,7 +25,7 @@ function* signIn(action) {
 
 function* signUp(action) {
   try {
-    const dataReg = yield api.auth(action.payload, "register");
+    const dataReg = yield api.auth.register(action.payload)
 
     yield put(authActions.signUpSuccess(dataReg));
     yield put(routerActions.push("/"))

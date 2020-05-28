@@ -17,19 +17,21 @@ import { Actions } from "components/ui/Actions";
 import { Modal } from "components/ui/Modal";
 
 import { ButtonCreate } from "./ButtonCreate";
+import { CreateForm } from "../CreateForm";
 
 import * as projectActions from "store/project/actions";
+
 import {
   getItems,
   getIsGetFetching,
   getIsCreateFetching,
+  getIdsIsDeleting,
 } from "store/project/selectors";
 
 import "./styles.scss";
-import { CreateForm } from "../CreateForm";
 
 const ListItem = (props) => {
-  const { project } = props;
+  const { project, onDeleteProject, isDeleting } = props;
 
   const [isOpenActions, setIsOpenActions] = useState(false);
 
@@ -38,33 +40,40 @@ const ListItem = (props) => {
     [project.createdAt]
   );
 
-  const handleMouseOver = useCallback(() => {
-    setIsOpenActions(!isOpenActions);
-  }, [isOpenActions]);
+  const handleMouseOver = useCallback(
+    (value) => () => {
+      setIsOpenActions(value);
+    },
+    []
+  );
 
   const handleClickEdit = useCallback(() => {
     console.log("edit");
   }, []);
 
-  const handleClickClose = useCallback(() => {
-    console.log("close");
-  }, []);
+  const handleClickDelete = useCallback(() => {
+    onDeleteProject(project.id);
+  }, [onDeleteProject, project.id]);
 
   return (
-    <div
+    <tr
       className="project-list-item"
-      onMouseEnter={handleMouseOver}
-      onMouseLeave={handleMouseOver}
+      onMouseEnter={handleMouseOver(true)}
+      onMouseLeave={handleMouseOver(false)}
     >
-      <span>{project.name}</span>
-      <span>{project.user.name}</span>
-      <span>{createdAtFormatted}</span>
-      <Actions
-        isOpen={isOpenActions}
-        onClickEdit={handleClickEdit}
-        onClickClose={handleClickClose}
-      />
-    </div>
+      <td>{project.name}</td>
+      <td>{project.user.name}</td>
+      <td>{createdAtFormatted}</td>
+      <td>
+        {!isDeleting && (
+          <Actions
+            isOpen={isOpenActions}
+            onClickEdit={handleClickEdit}
+            onClickClose={handleClickDelete}
+          />
+        )}
+      </td>
+    </tr>
   );
 };
 
@@ -81,21 +90,47 @@ export const ProjectsList = () => {
   const isGetFetching = useSelector(getIsGetFetching);
   const isCreateFetching = useSelector(getIsCreateFetching);
   const items = useSelector(getItems);
+  const idsIsDeleting = useSelector(getIdsIsDeleting);
+
+  const handleDeleteProject = useCallback(
+    (id) => {
+      dispatch(projectActions.deleteProject(id));
+    },
+    [dispatch]
+  );
 
   const rendererContent = useMemo(() => {
     return isGetFetching ? (
       <Spinner />
     ) : (
-      <div>
-        {R.compose(
-          R.map((project) => {
-            return <ListItem key={project.id} project={project} />;
-          }),
-          R.values
-        )(items)}
-      </div>
+      <table className="project-list-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Created By</th>
+            <th>Create At</th>
+            <th />
+          </tr>
+        </thead>
+        <tbody>
+          {R.compose(
+            R.map((project) => {
+              const isDeleting = R.includes(project.id, idsIsDeleting);
+              return (
+                <ListItem
+                  key={project.id}
+                  project={project}
+                  onDeleteProject={handleDeleteProject}
+                  isDeleting={isDeleting}
+                />
+              );
+            }),
+            R.values
+          )(items)}
+        </tbody>
+      </table>
     );
-  }, [isGetFetching, items]);
+  }, [isGetFetching, items, idsIsDeleting]);
 
   return (
     <Panel

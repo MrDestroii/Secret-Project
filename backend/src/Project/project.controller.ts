@@ -12,7 +12,7 @@ export class ProjectController {
   constructor(private readonly projectService: ProjectService) {}
 
   @UseGuards(JwtAuthGuard)
-  @Get("find")
+  @Get()
   find(@Request() req: { user: User }) {
     return this.projectService.findAll({
       user: req.user
@@ -20,13 +20,13 @@ export class ProjectController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Post("create")
+  @Post()
   create(@Body() body: CreateProjectDTO, @Request() req: { user: User}) {
     return this.projectService.create(body, req.user)
   }
 
   @UseGuards(JwtAuthGuard)
-  @Delete("remove")
+  @Delete()
   remove(@Body() body: { id: string }) {
     return this.projectService.remove(body.id)
   }
