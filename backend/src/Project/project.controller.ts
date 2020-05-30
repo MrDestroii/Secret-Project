@@ -1,8 +1,9 @@
-import { Controller, Get, UseGuards, Request, Post, Body, Delete } from "@nestjs/common";
+import { Controller, Get, UseGuards, Request, Post, Body, Delete, Patch, UsePipes, ValidationPipe, Param, Query, Put } from "@nestjs/common";
 
 import { JwtAuthGuard } from "src/Auth/jwt-auth.guard";
 
-import { User } from "src/User/user.entity";
+import { User as UserEntity } from "src/User/user.entity";
+import { User } from "src/decorators/user.decorator"
 
 import { ProjectService } from "./project.service";
 import CreateProjectDTO from "./dto/create-project.dto";
@@ -13,21 +14,30 @@ export class ProjectController {
 
   @UseGuards(JwtAuthGuard)
   @Get()
-  find(@Request() req: { user: User }) {
+  find(@User() user: UserEntity) {
     return this.projectService.findAll({
-      user: req.user
+      user
     });
   }
 
+  
   @UseGuards(JwtAuthGuard)
   @Post()
-  create(@Body() body: CreateProjectDTO, @Request() req: { user: User}) {
-    return this.projectService.create(body, req.user)
+  @UsePipes(new ValidationPipe({ transform: true }))
+  create(@Body() body: CreateProjectDTO, @User() user: UserEntity) {
+    return this.projectService.create(body, user)
   }
 
   @UseGuards(JwtAuthGuard)
   @Delete()
-  remove(@Body() body: { id: string }) {
-    return this.projectService.remove(body.id)
+  remove(@Query('id') id: string) {
+    return this.projectService.remove(id)
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Put()
+  @UsePipes(new ValidationPipe({ transform: true }))
+  update(@Body() body: CreateProjectDTO, @Query('id') id: string) {
+    return this.projectService.update(id, body)
   }
 }

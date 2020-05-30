@@ -1,22 +1,14 @@
-import React, {
-  useEffect,
-  useMemo,
-  useState,
-  useCallback,
-  useRef,
-} from "react";
+import React, { useEffect, useMemo, useCallback, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-import PropTypes from "prop-types";
-import moment from "moment";
 import * as R from "ramda";
 
 import { Panel } from "components/ui/Panel";
 import { Spinner } from "components/ui/Spinner";
-import { Actions } from "components/ui/Actions";
 import { Modal } from "components/ui/Modal";
 
 import { ButtonCreate } from "./ButtonCreate";
+import { ListItem } from "./ListItem";
 import { CreateForm } from "../CreateForm";
 
 import * as projectActions from "store/project/actions";
@@ -29,60 +21,6 @@ import {
 } from "store/project/selectors";
 
 import "./styles.scss";
-
-const ListItem = (props) => {
-  const { project, onDeleteProject, isDeleting } = props;
-
-  const [isOpenActions, setIsOpenActions] = useState(false);
-
-  const createdAtFormatted = useMemo(
-    () => moment(project.createdAt).format("lll"),
-    [project.createdAt]
-  );
-
-  const handleMouseOver = useCallback(
-    (value) => () => {
-      setIsOpenActions(value);
-    },
-    []
-  );
-
-  const handleClickEdit = useCallback(() => {
-    console.log("edit");
-  }, []);
-
-  const handleClickDelete = useCallback(() => {
-    onDeleteProject(project.id);
-  }, [onDeleteProject, project.id]);
-
-  const rendererActions = useMemo(() => {
-    return isDeleting ? (
-      <Spinner
-        fontSize="13"
-        classes={{ spinner: "project-list-item-deleting-spinner" }}
-      />
-    ) : (
-      <Actions
-        isOpen={isOpenActions}
-        onClickEdit={handleClickEdit}
-        onClickClose={handleClickDelete}
-      />
-    );
-  }, [isDeleting, isOpenActions, handleClickEdit, handleClickDelete]);
-
-  return (
-    <tr
-      className="project-list-item"
-      onMouseEnter={handleMouseOver(true)}
-      onMouseLeave={handleMouseOver(false)}
-    >
-      <td>{project.name}</td>
-      <td>{project.user.name}</td>
-      <td>{createdAtFormatted}</td>
-      <td>{rendererActions}</td>
-    </tr>
-  );
-};
 
 export const ProjectsList = () => {
   const refPanel = useRef();
@@ -106,6 +44,10 @@ export const ProjectsList = () => {
     [dispatch]
   );
 
+  const handleUpdateProject = useCallback((id, data, callback) => {
+    dispatch(projectActions.updateProject(id, data, callback))
+  }, [dispatch]);
+
   const rendererContent = useMemo(() => {
     return isGetFetching ? (
       <Spinner />
@@ -128,6 +70,7 @@ export const ProjectsList = () => {
                   key={project.id}
                   project={project}
                   onDeleteProject={handleDeleteProject}
+                  onUpdateProject={handleUpdateProject}
                   isDeleting={isDeleting}
                 />
               );
@@ -137,7 +80,13 @@ export const ProjectsList = () => {
         </tbody>
       </table>
     );
-  }, [isGetFetching, items, idsIsDeleting, handleDeleteProject]);
+  }, [
+    isGetFetching,
+    items,
+    idsIsDeleting,
+    handleDeleteProject,
+    handleUpdateProject,
+  ]);
 
   return (
     <Panel
@@ -154,7 +103,7 @@ export const ProjectsList = () => {
       <Modal refButton={refButtonCreate} title="Create Project">
         {(onChangeOpen) => (
           <CreateForm
-            onCreate={(data) => {
+            onSave={(data) => {
               dispatch(projectActions.createProject(data, onChangeOpen));
             }}
             isCreateFetching={isCreateFetching}
@@ -163,16 +112,4 @@ export const ProjectsList = () => {
       </Modal>
     </Panel>
   );
-};
-
-ListItem.propTypes = {
-  project: PropTypes.shape({
-    name: PropTypes.string,
-    user: PropTypes.shape({
-      name: PropTypes.string,
-      email: PropTypes.string,
-    }),
-    createdAt: PropTypes.string,
-    updatedAt: PropTypes.string,
-  }),
 };

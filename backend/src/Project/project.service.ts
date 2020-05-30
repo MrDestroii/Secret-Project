@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, HttpException, HttpStatus } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 
 import { User } from "src/User/user.entity";
@@ -20,28 +20,45 @@ export class ProjectService {
     return this.projectRepository.find({
       relations: ["user"],
       where: {
-        user: query.user
-      }
+        user: query.user,
+      },
     });
   }
 
   create(project: CreateProjectDTO, user: User): Promise<Project> {
     const createdProjectEntity = this.projectRepository.create({
       ...project,
-      user
+      user,
     });
-    return this.projectRepository.save(createdProjectEntity)
+    return this.projectRepository.save(createdProjectEntity);
   }
 
   async remove(id: string): Promise<Project> {
-    const currentProject = await this.projectRepository.findOne(id)
-    
-    if(currentProject) {
-      const removedProject = await this.projectRepository.remove(currentProject)
+    try {
+      const currentProject = await this.projectRepository.findOneOrFail(id);
+
+    if (currentProject) {
+      const removedProject = await this.projectRepository.remove(
+        currentProject
+      );
       return {
         ...removedProject,
-        id
-      }
+        id,
+      };
+    }
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.NOT_FOUND)
+    }
+  }
+
+  async update(id: string, project: CreateProjectDTO): Promise<Project> {
+    try {
+      await this.projectRepository.update(id, project);
+      return this.projectRepository.findOneOrFail(id, {
+        relations: ["user"],
+      });
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.NOT_FOUND)
     }
   }
 }

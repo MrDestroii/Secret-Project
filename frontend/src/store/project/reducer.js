@@ -7,6 +7,7 @@ const initialState = {
   isGetFetching: false,
   isCreateFetching: false,
   idsIsDeleting: [],
+  idsIsUpdating: [],
 };
 
 export const projectReducer = (state = initialState, action) => {
@@ -63,6 +64,28 @@ export const projectReducer = (state = initialState, action) => {
         ...state,
         items: R.omit([deletedProject.id], state.items),
         idsIsDeleting: R.without([deletedProject.id], state.idsIsDeleting),
+      };
+    }
+
+    case projectTypes.PROJECT_UPDATE: {
+      return {
+        ...state,
+        idsIsUpdating: R.append(action.payload, state.idsIsUpdating),
+      };
+    }
+
+    case projectTypes.PROJECT_UPDATE_SUCCESS: {
+      const updatedItem = action.payload;
+
+      return {
+        ...state,
+        items: {
+          ...state.items,
+          [updatedItem.id]: {
+            ...updatedItem,
+          },
+        },
+        idsIsUpdating: R.without([updatedItem.id], state.idsIsUpdating),
       };
     }
 

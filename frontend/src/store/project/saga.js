@@ -32,9 +32,22 @@ function* deleteProject(action) {
   try {
     const id = action.payload;
 
-    const deletedProject = yield api.service('project').remove({ id })
+    const deletedProject = yield api.service('project').remove(id)
 
     yield put(projectActions.deleteProjectSuccess(deletedProject))
+  } catch (e) {
+    console.log({ e })
+  }
+}
+
+function* updateProject(action) {
+  const { id, data, callback } = action.payload
+  try {
+    const updatedProject = yield api.service('project').update(id, data)
+    
+    callback && callback()
+
+    yield put(projectActions.updateProjectSuccess(updatedProject))
   } catch (e) {
     console.log({ e })
   }
@@ -44,4 +57,5 @@ export function* projectSaga() {
   yield takeEvery(projectTypes.PROJECTS_GET, getProjects);
   yield takeEvery(projectTypes.PROJECT_CREATE, createProject);
   yield takeEvery(projectTypes.PROJECT_DELETE, deleteProject);
+  yield takeEvery(projectTypes.PROJECT_UPDATE, updateProject)
 }

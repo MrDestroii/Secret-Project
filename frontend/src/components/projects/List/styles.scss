@@ -1,12 +1,5 @@
 @import "assets/scss/index.scss";
 
-.project-list-item {
-  height: 40px;
-  &:not(:last-child) {
-    border-bottom: 1px solid #0dc5c1;
-  }
-}
-
 .project-list-header {
   @extend .d-flex, .align-items-center;
 
@@ -17,8 +10,4 @@
 
 .project-list-table {
   width: 100%;
-}
-
-.project-list-item-deleting-spinner {
-  color: red;
 }

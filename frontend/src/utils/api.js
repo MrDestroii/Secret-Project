@@ -60,8 +60,8 @@ export const api = {
         get: (id) => basic(serviceName, "get", null, { id }),
         create: (body) => basic(serviceName, "post", body),
         find: (body) => basic(serviceName, "get", body),
-        remove: (body) => basic(serviceName, "delete", body),
-        update: (body) => basic(serviceName, "put", body),
+        remove: id => basic(serviceName, "delete", null, { id }),
+        update: (id, body) => basic(serviceName, "put", body, { id }),
       };
     }
   },

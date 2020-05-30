@@ -11,7 +11,7 @@ export const getProjectsSuccess = (data) => ({
 
 export const createProject = (data, callback) => ({
   type: projectTypes.PROJECT_CREATE,
-  payload: {data, callback},
+  payload: { data, callback },
 });
 
 export const createProjectSuccess = (project) => ({
@@ -21,10 +21,24 @@ export const createProjectSuccess = (project) => ({
 
 export const deleteProject = (id) => ({
   type: projectTypes.PROJECT_DELETE,
-  payload: id
-})
+  payload: id,
+});
 
 export const deleteProjectSuccess = (data) => ({
   type: projectTypes.PROJECT_DELETE_SUCCESS,
-  payload: data
-})
+  payload: data,
+});
+
+export const updateProject = (id, data, callback) => ({
+  type: projectTypes.PROJECT_UPDATE,
+  payload: {
+    id,
+    data,
+    callback,
+  },
+});
+
+export const updateProjectSuccess = (data) => ({
+  type: projectTypes.PROJECT_UPDATE_SUCCESS,
+  payload: data,
+});

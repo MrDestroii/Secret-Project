@@ -1,0 +1,10 @@
+.project-list-item {
+  height: 40px;
+  &:not(:last-child) {
+    border-bottom: 1px solid #0dc5c1;
+  }
+}
+
+.project-list-item-deleting-spinner {
+  color: red;
+}

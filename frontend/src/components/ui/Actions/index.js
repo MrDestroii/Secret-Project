@@ -10,7 +10,7 @@ import { ReactComponent as IconPencil } from "assets/icons/pencil.svg";
 import "./styles.scss";
 
 export const Actions = memo((props) => {
-  const { isOpen, onClickClose, onClickEdit } = props;
+  const { isOpen, onClickClose, onClickEdit, refEdit } = props;
 
   const { opacity, transform } = useSpring({
     from: { opacity: 0, transform: "translate3d(15px,0,0)" },
@@ -22,7 +22,11 @@ export const Actions = memo((props) => {
 
   return (
     <a.div className="ui-actions-wrapper" style={{ opacity, transform }}>
-      <IconPencil className="ui-actions-icon" onClick={onClickEdit} />
+      <IconPencil
+        ref={refEdit}
+        className="ui-actions-icon"
+        onClick={onClickEdit}
+      />
       <IconClose className="ui-actions-icon" onClick={onClickClose} />
     </a.div>
   );
@@ -30,6 +34,10 @@ export const Actions = memo((props) => {
 
 Actions.propTypes = {
   isOpen: PropTypes.bool.isRequired,
-  onClickEdit: PropTypes.func.isRequired,
-  onClickClose: PropTypes.func.isRequired,
+  onClickEdit: PropTypes.func,
+  onClickClose: PropTypes.func,
+  refButton: PropTypes.oneOfType([
+    PropTypes.func,
+    PropTypes.shape({ current: PropTypes.instanceOf(Element) }),
+  ]),
 };

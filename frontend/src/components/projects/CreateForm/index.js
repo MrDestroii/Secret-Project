@@ -10,19 +10,26 @@ import { Spinner } from "components/ui/Spinner";
 import "./styles.scss";
 
 export const CreateForm = (props) => {
-  const { onCreate, isCreateFetching } = props;
+  const { onSave, isCreateFetching, projectName, idProject } = props;
 
-  const [name, setName] = useState("");
+  const [name, setName] = useState(projectName);
 
   const handleChangeName = useCallback(({ target: { value } }) => {
     setName(value);
   }, []);
 
-  const handleClickCreate = useCallback(() => {
-    onCreate({ name });
-  }, [onCreate, name]);
+  const handleClickSave = useCallback(() => {
+    onSave({ name });
+  }, [onSave, name]);
 
-  const isDisabledCreate = useMemo(() => R.isEmpty(name), [name]);
+  const isDisabledSaveButton = useMemo(() => {
+    const idProjectIsNil = R.isNil(idProject);
+    const nameIsEmpty = R.isEmpty(name);
+
+    return idProjectIsNil
+      ? nameIsEmpty
+      : R.or(nameIsEmpty, R.equals(name, projectName));
+  }, [name, idProject, projectName]);
 
   const rendererSpinner = useMemo(() => {
     return isCreateFetching ? (
@@ -42,9 +49,9 @@ export const CreateForm = (props) => {
       </div>
       <div className="project-create-form-buttons">
         <Button
-          title="Create"
-          onClick={handleClickCreate}
-          isDisable={isDisabledCreate}
+          title="Save"
+          onClick={handleClickSave}
+          isDisable={isDisabledSaveButton}
         />
       </div>
       {rendererSpinner}
@@ -53,6 +60,12 @@ export const CreateForm = (props) => {
 };
 
 CreateForm.propTypes = {
-  onCreate: PropTypes.func.isRequired,
+  onSave: PropTypes.func.isRequired,
   isCreateFetching: PropTypes.bool,
+  projectName: PropTypes.string,
+  idProject: PropTypes.string,
+};
+
+CreateForm.defaultProps = {
+  projectName: "",
 };
