@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useCallback, useRef } from "react";
+import React, { useEffect, useMemo, useCallback, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import * as R from "ramda";
@@ -22,6 +22,7 @@ import {
 } from "store/project/selectors";
 
 import "./styles.scss";
+import { Pagination } from "components/ui/Pagination";
 
 export const ProjectsList = () => {
   const refPanel = useRef();
@@ -102,6 +103,12 @@ export const ProjectsList = () => {
     [dispatch]
   );
 
+  const [page, setPage] = useState(0)
+
+  const rendererPagination = useMemo(() => {
+    return <Pagination count={63} page={page} onChangePage={(newPage) => setPage(newPage)}/>
+  }, [page])
+
   return (
     <Panel
       refWrapper={refPanel}
@@ -114,6 +121,7 @@ export const ProjectsList = () => {
       }}
     >
       {rendererContent}
+      {rendererPagination}
       <Modal refButton={refButtonCreate} title="Create Project">
         {(onChangeOpen) => (
           <CreateForm
