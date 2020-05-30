@@ -55,6 +55,21 @@ const ListItem = (props) => {
     onDeleteProject(project.id);
   }, [onDeleteProject, project.id]);
 
+  const rendererActions = useMemo(() => {
+    return isDeleting ? (
+      <Spinner
+        fontSize="13"
+        classes={{ spinner: "project-list-item-deleting-spinner" }}
+      />
+    ) : (
+      <Actions
+        isOpen={isOpenActions}
+        onClickEdit={handleClickEdit}
+        onClickClose={handleClickDelete}
+      />
+    );
+  }, [isDeleting, isOpenActions, handleClickEdit, handleClickDelete]);
+
   return (
     <tr
       className="project-list-item"
@@ -64,15 +79,7 @@ const ListItem = (props) => {
       <td>{project.name}</td>
       <td>{project.user.name}</td>
       <td>{createdAtFormatted}</td>
-      <td>
-        {!isDeleting && (
-          <Actions
-            isOpen={isOpenActions}
-            onClickEdit={handleClickEdit}
-            onClickClose={handleClickDelete}
-          />
-        )}
-      </td>
+      <td>{rendererActions}</td>
     </tr>
   );
 };
@@ -130,7 +137,7 @@ export const ProjectsList = () => {
         </tbody>
       </table>
     );
-  }, [isGetFetching, items, idsIsDeleting]);
+  }, [isGetFetching, items, idsIsDeleting, handleDeleteProject]);
 
   return (
     <Panel

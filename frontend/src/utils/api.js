@@ -54,7 +54,7 @@ export const api = {
         serviceName
       )
     ) {
-      throw new Error("api util - service not incorrect");
+      throw new Error("api utils - service incorrect");
     } else {
       return {
         get: (id) => basic(serviceName, "get", null, { id }),
