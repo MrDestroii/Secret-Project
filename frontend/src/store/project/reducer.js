@@ -7,7 +7,7 @@ const initialState = {
   isGetFetching: false,
   isCreateFetching: false,
   idsIsDeleting: [],
-  idsIsUpdating: [],
+  isUpdateFetching: false,
 };
 
 export const projectReducer = (state = initialState, action) => {
@@ -70,7 +70,7 @@ export const projectReducer = (state = initialState, action) => {
     case projectTypes.PROJECT_UPDATE: {
       return {
         ...state,
-        idsIsUpdating: R.append(action.payload, state.idsIsUpdating),
+        isUpdateFetching: true,
       };
     }
 
@@ -85,8 +85,30 @@ export const projectReducer = (state = initialState, action) => {
             ...updatedItem,
           },
         },
-        idsIsUpdating: R.without([updatedItem.id], state.idsIsUpdating),
+        isUpdateFetching: false,
       };
+    }
+
+    case projectTypes.PROJECT_CREATE_ERROR: {
+      return {
+        ...state,
+        isCreateFetching: false,
+      };
+    }
+
+    case projectTypes.PROJECT_DELETE_ERROR: {
+      const { id } = action.payload;
+      return {
+        ...state,
+        idsIsDeleting: R.without([id], state.idsIsDeleting),
+      };
+    }
+
+    case projectTypes.PROJECT_UPDATE_ERROR: {
+      return {
+        ...state,
+        isUpdateFetching: false
+      }
     }
 
     default:

@@ -14,3 +14,5 @@ export const getIsCreateFetching = createSelector(getState, R.prop("isCreateFetc
 );
 
 export const getIdsIsDeleting = createSelector(getState, R.prop('idsIsDeleting'))
+
+export const getIsUpdateFetching = createSelector(getState, R.prop('isUpdateFetching'))

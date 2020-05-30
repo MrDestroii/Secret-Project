@@ -12,7 +12,13 @@ import { Modal } from "components/ui/Modal";
 import "./styles.scss";
 
 export const ListItem = (props) => {
-  const { project, onDeleteProject, isDeleting, onUpdateProject } = props;
+  const {
+    project,
+    onDeleteProject,
+    isDeleting,
+    onUpdateProject,
+    isUpdateFetching,
+  } = props;
 
   const refEditButton = useRef();
 
@@ -60,7 +66,7 @@ export const ListItem = (props) => {
               onSave={handleUpdateProject(onChangeOpen)}
               idProject={project.id}
               projectName={project.name}
-              isCreateFetching={false}
+              isFetching={isUpdateFetching}
             />
           )}
         </Modal>
@@ -73,6 +79,7 @@ export const ListItem = (props) => {
     project.id,
     project.name,
     handleUpdateProject,
+    isUpdateFetching,
   ]);
 
   return (
@@ -101,4 +108,5 @@ ListItem.propTypes = {
   onDeleteProject: PropTypes.func.isRequired,
   onUpdateProject: PropTypes.func.isRequired,
   isDeleting: PropTypes.bool.isRequired,
+  isUpdateFetching: PropTypes.bool,
 };

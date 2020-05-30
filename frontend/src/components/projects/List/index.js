@@ -18,6 +18,7 @@ import {
   getIsGetFetching,
   getIsCreateFetching,
   getIdsIsDeleting,
+  getIsUpdateFetching,
 } from "store/project/selectors";
 
 import "./styles.scss";
@@ -32,9 +33,10 @@ export const ProjectsList = () => {
     dispatch(projectActions.getProjects());
   }, [dispatch]);
 
+  const items = useSelector(getItems);
   const isGetFetching = useSelector(getIsGetFetching);
   const isCreateFetching = useSelector(getIsCreateFetching);
-  const items = useSelector(getItems);
+  const isUpdateFetching = useSelector(getIsUpdateFetching);
   const idsIsDeleting = useSelector(getIdsIsDeleting);
 
   const handleDeleteProject = useCallback(
@@ -44,9 +46,12 @@ export const ProjectsList = () => {
     [dispatch]
   );
 
-  const handleUpdateProject = useCallback((id, data, callback) => {
-    dispatch(projectActions.updateProject(id, data, callback))
-  }, [dispatch]);
+  const handleUpdateProject = useCallback(
+    (id, data, callback) => {
+      dispatch(projectActions.updateProject(id, data, callback));
+    },
+    [dispatch]
+  );
 
   const rendererContent = useMemo(() => {
     return isGetFetching ? (
@@ -72,6 +77,7 @@ export const ProjectsList = () => {
                   onDeleteProject={handleDeleteProject}
                   onUpdateProject={handleUpdateProject}
                   isDeleting={isDeleting}
+                  isUpdateFetching={isUpdateFetching}
                 />
               );
             }),
@@ -86,7 +92,15 @@ export const ProjectsList = () => {
     idsIsDeleting,
     handleDeleteProject,
     handleUpdateProject,
+    isUpdateFetching,
   ]);
+
+  const handleOnCreate = useCallback(
+    (callback) => (data) => {
+      dispatch(projectActions.createProject(data, callback));
+    },
+    [dispatch]
+  );
 
   return (
     <Panel
@@ -103,10 +117,8 @@ export const ProjectsList = () => {
       <Modal refButton={refButtonCreate} title="Create Project">
         {(onChangeOpen) => (
           <CreateForm
-            onSave={(data) => {
-              dispatch(projectActions.createProject(data, onChangeOpen));
-            }}
-            isCreateFetching={isCreateFetching}
+            onSave={handleOnCreate(onChangeOpen)}
+            isFetching={isCreateFetching}
           />
         )}
       </Modal>

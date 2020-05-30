@@ -10,7 +10,7 @@ import { Spinner } from "components/ui/Spinner";
 import "./styles.scss";
 
 export const CreateForm = (props) => {
-  const { onSave, isCreateFetching, projectName, idProject } = props;
+  const { onSave, isFetching, projectName, idProject } = props;
 
   const [name, setName] = useState(projectName);
 
@@ -32,10 +32,10 @@ export const CreateForm = (props) => {
   }, [name, idProject, projectName]);
 
   const rendererSpinner = useMemo(() => {
-    return isCreateFetching ? (
+    return isFetching ? (
       <Spinner classes={{ wrapper: "project-create-form-spinner-wrapper" }} />
     ) : null;
-  }, [isCreateFetching]);
+  }, [isFetching]);
 
   return (
     <div className="project-create-form-wrapper">
@@ -61,7 +61,7 @@ export const CreateForm = (props) => {
 
 CreateForm.propTypes = {
   onSave: PropTypes.func.isRequired,
-  isCreateFetching: PropTypes.bool,
+  isFetching: PropTypes.bool,
   projectName: PropTypes.string,
   idProject: PropTypes.string,
 };

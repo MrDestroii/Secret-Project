@@ -24,19 +24,18 @@ function* createProject(action) {
 
     callback && callback()
   } catch (e) {
-    console.log({ e });
+    yield put(projectActions.createProjectError(e))
   }
 }
 
 function* deleteProject(action) {
+  const id = action.payload;
   try {
-    const id = action.payload;
-
     const deletedProject = yield api.service('project').remove(id)
 
     yield put(projectActions.deleteProjectSuccess(deletedProject))
   } catch (e) {
-    console.log({ e })
+    yield put(projectActions.deleteProjectError(id, e))
   }
 }
 
