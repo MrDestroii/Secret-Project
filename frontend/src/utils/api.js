@@ -38,7 +38,7 @@ const basic = (url, method, data, params) => {
     .then((response) => response.data)
     .catch(e => {
       const isLogged = authSelectors.getIsLogged(store.getState())
-      const isUnauthorized = R.compose(R.equals('Unauthorized'), R.path(['response', 'data', 'error']))(e)
+      const isUnauthorized = R.compose(R.equals('Unauthorized'), R.path(['response', 'data', 'message']))(e)
 
       if(isLogged && isUnauthorized) {
         store.dispatch(authActions.logout())
