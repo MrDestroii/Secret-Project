@@ -106,7 +106,7 @@ export const ProjectsList = () => {
   const [page, setPage] = useState(0)
 
   const rendererPagination = useMemo(() => {
-    return <Pagination count={63} page={page} onChangePage={(newPage) => setPage(newPage)}/>
+    return <Pagination count={43} page={page} onChangePage={(newPage) => setPage(newPage)}/>
   }, [page])
 
   return (

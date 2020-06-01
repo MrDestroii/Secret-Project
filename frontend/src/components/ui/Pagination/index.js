@@ -1,12 +1,14 @@
-import React, { useMemo, useCallback } from "react";
+import React, { useMemo, useCallback, useState, memo } from "react";
 
 import PropTypes from "prop-types";
 import classNames from "classnames";
 import * as R from "ramda";
 
 import { Button } from "components/ui/Button";
+import { ControlsIcon } from "./ControlsIcon";
 
-import { ReactComponent as IconArrow } from "assets/icons/down-arrow.svg";
+import { usePrevious } from "hooks/spring";
+import { isControl, getRangeData } from "./helpers";
 
 import "./styles.scss";
 
@@ -14,8 +16,50 @@ const classesButton = {
   button: "ui-pagination-button",
 };
 
+const titleControlsTest = `Press "Control" button on your keyboard for to switch general controls buttons`;
+
+const Dots = memo((props) => {
+  const { page, countPages, countPerPage, handleChangePage } = props;
+
+  const previousPage = usePrevious(page);
+
+  const [firstPage, lastPage] = getRangeData(
+    page,
+    countPages,
+    countPerPage,
+    previousPage
+  );
+
+  const viewsPagesArray = R.compose(
+    R.slice(firstPage, lastPage),
+    R.range(0)
+  )(countPages);
+
+  return (
+    <div className="ui-pagination-dots">
+      {R.map((number) => {
+        const isActivePage = R.equals(page, number);
+        const className = classNames("ui-pagination-dot", {
+          active: isActivePage,
+        });
+
+        return (
+          <div
+            key={number}
+            className={className}
+            title={number + 1}
+            onClick={handleChangePage(number)}
+          />
+        );
+      }, viewsPagesArray)}
+    </div>
+  );
+});
+
 export const Pagination = (props) => {
   const { count, page, countPerPage, onChangePage } = props;
+
+  const [isGeneralControls, setIsGeneralControls] = useState(false);
 
   const handleChangePage = useCallback(
     (number) => () => {
@@ -29,46 +73,71 @@ export const Pagination = (props) => {
     countPerPage,
   ]);
 
-  const rendererDots = useMemo(() => {
-    const minimumDisplay = countPages - countPerPage;
-    const pageMoreThenMinimumDisplay = R.gt(page, minimumDisplay);
+  const configsControlsButtons = useMemo(
+    () => ({
+      prev: {
+        isDisable: R.equals(page, 0),
+        clickValue: isGeneralControls ? 0 : page - 1,
+      },
+      next: {
+        isDisable: R.equals(page + 1, countPages),
+        clickValue: isGeneralControls ? countPages - 1 : page + 1,
+      },
+    }),
+    [page, countPages, isGeneralControls]
+  );
 
-    const viewsPagesArray = R.compose(
-      R.slice(
-        pageMoreThenMinimumDisplay ? minimumDisplay : page,
-        pageMoreThenMinimumDisplay ? countPages : page + countPerPage
-      ),
-      R.range(0)
-    )(countPages);
+  const handleDownCtrl = useCallback(
+    ({ key }) => {
+      if (isControl(key) && !isGeneralControls) {
+        setIsGeneralControls(true);
+      }
+    },
+    [isGeneralControls]
+  );
 
-    return (
-      <div className="ui-pagination-dots">
-        {R.map((number) => {
-          const isActivePage = R.equals(page, number);
-          const className = classNames("ui-pagination-dot", {
-            active: isActivePage,
-          });
-
-          return <div key={number} className={className} title={number + 1} />;
-        }, viewsPagesArray)}
-      </div>
-    );
-  }, [countPages, page, countPerPage]);
+  const handleUpCtrl = useCallback(({ key }) => {
+    if (isControl(key)) {
+      setIsGeneralControls(false);
+    }
+  }, []);
 
   return (
-    <div className="ui-pagination-wrapper">
+    <div
+      tabIndex="0"
+      className="ui-pagination-wrapper"
+      onKeyDown={handleDownCtrl}
+      onKeyUp={handleUpCtrl}
+      title={titleControlsTest}
+    >
       <Button
-        title={<IconArrow className="ui-pagination-button-icon left" />}
+        title={
+          <ControlsIcon
+            className="ui-pagination-button-icon prev"
+            isDouble={isGeneralControls}
+          />
+        }
         classes={classesButton}
-        onClick={handleChangePage(page - 1)}
-        isDisable={R.equals(page, 0)}
+        onClick={handleChangePage(configsControlsButtons.prev.clickValue)}
+        isDisable={configsControlsButtons.prev.isDisable}
       />
-      {rendererDots}
+      <Dots
+        page={page}
+        countPerPage={countPerPage}
+        count={count}
+        countPages={countPages}
+        handleChangePage={handleChangePage}
+      />
       <Button
-        title={<IconArrow className="ui-pagination-button-icon right" />}
+        title={
+          <ControlsIcon
+            className="ui-pagination-button-icon next"
+            isDouble={isGeneralControls}
+          />
+        }
         classes={classesButton}
-        onClick={handleChangePage(page + 1)}
-        isDisable={R.equals(page, countPages - 1)}
+        onClick={handleChangePage(configsControlsButtons.next.clickValue)}
+        isDisable={configsControlsButtons.next.isDisable}
       />
     </div>
   );
