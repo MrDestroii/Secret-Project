@@ -16,7 +16,7 @@ const classesButton = {
   button: "ui-pagination-button",
 };
 
-const titleControlsTest = `Press "Control" button on your keyboard for to switch general controls buttons`;
+const titleControls = `Press "Control" button on your keyboard for to switch general controls buttons`;
 
 const Dots = memo((props) => {
   const { page, countPages, countPerPage, handleChangePage } = props;
@@ -108,7 +108,7 @@ export const Pagination = (props) => {
       className="ui-pagination-wrapper"
       onKeyDown={handleDownCtrl}
       onKeyUp={handleUpCtrl}
-      title={titleControlsTest}
+      title={titleControls}
     >
       <Button
         title={
