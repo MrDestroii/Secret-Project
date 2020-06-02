@@ -1,14 +1,13 @@
-import React, { useMemo, useCallback, useState, memo } from "react";
+import React, { useMemo, useCallback, useState } from "react";
 
 import PropTypes from "prop-types";
-import classNames from "classnames";
 import * as R from "ramda";
 
 import { Button } from "components/ui/Button";
 import { ControlsIcon } from "./ControlsIcon";
+import { Dots } from "./Dots";
 
-import { usePrevious } from "hooks/spring";
-import { isControl, getRangeData } from "./helpers";
+import { isControl } from "./helpers";
 
 import "./styles.scss";
 
@@ -18,44 +17,6 @@ const classesButton = {
 
 const titleControls = `Press "Control" button on your keyboard for to switch general controls buttons`;
 
-const Dots = memo((props) => {
-  const { page, countPages, countPerPage, handleChangePage } = props;
-
-  const previousPage = usePrevious(page);
-
-  const [firstPage, lastPage] = getRangeData(
-    page,
-    countPages,
-    countPerPage,
-    previousPage
-  );
-
-  const viewsPagesArray = R.compose(
-    R.slice(firstPage, lastPage),
-    R.range(0)
-  )(countPages);
-
-  return (
-    <div className="ui-pagination-dots">
-      {R.map((number) => {
-        const isActivePage = R.equals(page, number);
-        const className = classNames("ui-pagination-dot", {
-          active: isActivePage,
-        });
-
-        return (
-          <div
-            key={number}
-            className={className}
-            title={number + 1}
-            onClick={handleChangePage(number)}
-          />
-        );
-      }, viewsPagesArray)}
-    </div>
-  );
-});
-
 export const Pagination = (props) => {
   const { count, page, countPerPage, onChangePage } = props;
 
@@ -63,10 +24,27 @@ export const Pagination = (props) => {
 
   const handleChangePage = useCallback(
     (number) => () => {
-      onChangePage(number);
+      if (R.compose(R.not, R.equals(number))(page)) {
+        onChangePage(number);
+      }
     },
-    [onChangePage]
+    [onChangePage, page]
   );
+
+  const handleDownCtrl = useCallback(
+    ({ key }) => {
+      if (isControl(key) && !isGeneralControls) {
+        setIsGeneralControls(true);
+      }
+    },
+    [isGeneralControls]
+  );
+
+  const handleUpCtrl = useCallback(({ key }) => {
+    if (isControl(key)) {
+      setIsGeneralControls(false);
+    }
+  }, []);
 
   const countPages = useMemo(() => Math.ceil(count / countPerPage), [
     count,
@@ -86,21 +64,6 @@ export const Pagination = (props) => {
     }),
     [page, countPages, isGeneralControls]
   );
-
-  const handleDownCtrl = useCallback(
-    ({ key }) => {
-      if (isControl(key) && !isGeneralControls) {
-        setIsGeneralControls(true);
-      }
-    },
-    [isGeneralControls]
-  );
-
-  const handleUpCtrl = useCallback(({ key }) => {
-    if (isControl(key)) {
-      setIsGeneralControls(false);
-    }
-  }, []);
 
   return (
     <div
