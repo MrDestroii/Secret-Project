@@ -1,0 +1,11 @@
+@import "assets/scss/index.scss";
+
+.ui-search-input-wrapper {
+  @extend .ml-15, .mr-15;
+}
+
+.ui-search-input-icon {
+   width: 100%;
+   height: 100%;
+   cursor: pointer;
+}

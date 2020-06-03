@@ -1,8 +1,10 @@
-import React, { useEffect, useRef, useCallback } from "react";
+import React, { useRef, useCallback } from "react";
 
 import PropTypes from "prop-types";
 
 import { useSpring, animated } from "react-spring";
+
+import { useMouseEnterAndLeave } from "hooks/useMouseEnterAndLeave";
 
 import { ReactComponent as IconPlus } from "assets/icons/plus.svg";
 
@@ -33,16 +35,7 @@ export const ButtonCreate = (props) => {
     }, 1500);
   }, [set]);
 
-  useEffect(() => {
-    const elem = refElem.current;
-    elem.addEventListener("mouseenter", handleMouseEnter);
-    elem.addEventListener("mouseleave", handleMouseLeave);
-
-    return () => {
-      elem.removeEventListener("mouseenter", handleMouseEnter);
-      elem.removeEventListener("mouseleave", handleMouseLeave);
-    };
-  }, [refElem, handleMouseEnter, handleMouseLeave]);
+  useMouseEnterAndLeave(refElem, handleMouseEnter, handleMouseLeave);
 
   return (
     <animated.div style={{ transform }} className="button-create-wrapper">

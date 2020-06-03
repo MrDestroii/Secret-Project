@@ -30,6 +30,7 @@ import {
 } from "store/project/selectors";
 
 import "./styles.scss";
+import { SearchInput } from "components/ui/SearchInput";
 
 const limit = 5;
 
@@ -37,18 +38,17 @@ export const ProjectsList = () => {
   const refPanel = useRef();
   const refButtonCreate = useRef();
 
-  const [page, setPage] = useState(0);
+  const [filters, setFilters] = useState({
+    page: 0,
+    searchValue: "",
+    limit,
+  });
 
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(
-      projectActions.getProjects({
-        limit,
-        page,
-      })
-    );
-  }, [dispatch, page]);
+    dispatch(projectActions.getProjects(filters));
+  }, [dispatch, filters]);
 
   const items = useSelector(getItemsData);
   const count = useSelector(getItemsCount);
@@ -78,7 +78,15 @@ export const ProjectsList = () => {
     [dispatch]
   );
 
-  const handleChangePage = useCallback((newPage) => setPage(newPage), []);
+  const handleChangePage = useCallback(
+    (newPage) => {
+      setFilters({
+        ...filters,
+        page: newPage,
+      });
+    },
+    [filters]
+  );
 
   const rendererContent = useMemo(() => {
     return isGetFetching ? (
@@ -94,22 +102,30 @@ export const ProjectsList = () => {
           </tr>
         </thead>
         <tbody>
-          {R.compose(
-            R.map((project) => {
-              const isDeleting = R.includes(project.id, idsIsDeleting);
-              return (
-                <ListItem
-                  key={project.id}
-                  project={project}
-                  onDeleteProject={handleDeleteProject}
-                  onUpdateProject={handleUpdateProject}
-                  isDeleting={isDeleting}
-                  isUpdateFetching={isUpdateFetching}
-                />
-              );
-            }),
-            R.values
-          )(items)}
+          {R.compose(R.not, R.isEmpty)(items) ? (
+            R.compose(
+              R.map((project) => {
+                const isDeleting = R.includes(project.id, idsIsDeleting);
+                return (
+                  <ListItem
+                    key={project.id}
+                    project={project}
+                    onDeleteProject={handleDeleteProject}
+                    onUpdateProject={handleUpdateProject}
+                    isDeleting={isDeleting}
+                    isUpdateFetching={isUpdateFetching}
+                  />
+                );
+              }),
+              R.values
+            )(items)
+          ) : (
+            <tr>
+              <td colSpan="100%">
+                <div>Projects Not Found</div>
+              </td>
+            </tr>
+          )}
         </tbody>
       </table>
     );
@@ -127,11 +143,11 @@ export const ProjectsList = () => {
       <Pagination
         count={count}
         countPerPage={limit}
-        page={page}
+        page={filters.page}
         onChangePage={handleChangePage}
       />
     );
-  }, [page, count, handleChangePage]);
+  }, [filters.page, count, handleChangePage]);
 
   const rendererCreateModal = useMemo(() => {
     return (
@@ -151,7 +167,25 @@ export const ProjectsList = () => {
       refWrapper={refPanel}
       title="Projects"
       headerContent={
-        <ButtonCreate refElem={refPanel} refButton={refButtonCreate} />
+        <>
+          <ButtonCreate refElem={refPanel} refButton={refButtonCreate} />
+          <SearchInput
+            onReset={() => {
+              setFilters({
+                ...filters,
+                searchValue: "",
+                page: 0,
+              });
+            }}
+            onSearch={(value) => {
+              setFilters({
+                ...filters,
+                searchValue: value,
+                page: 0,
+              });
+            }}
+          />
+        </>
       }
       classes={{
         header: "project-list-header",

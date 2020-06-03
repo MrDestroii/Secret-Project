@@ -9,12 +9,26 @@ import { HiddingPassword } from "./HiddingPassword";
 
 import "./styles.scss";
 
+const isRightPosition = R.equals("right");
+const isLeftPosition = R.equals("left");
+
 export const Input = (props) => {
-  const { label, placeholder, value, onChange, type, classes, name } = props;
+  const {
+    label,
+    placeholder,
+    value,
+    onChange,
+    type,
+    classes,
+    name,
+    icon,
+    iconPosition,
+  } = props;
 
   const [isHiddenPassword, setIsHiddenPassword] = useState(true);
 
   const isTypePassword = useMemo(() => R.equals(type, "password"), [type]);
+  const isNotNilIcon = useMemo(() => R.compose(R.not, R.isNil)(icon), [icon]);
 
   const currentClasses = useMemo(() => {
     return R.merge(Input.defaultProps.classes, classes);
@@ -31,17 +45,17 @@ export const Input = (props) => {
     () => classNames("ui-input-wrapper", currentClasses.wrapper),
     [currentClasses.wrapper]
   );
-  const classNameInput = useMemo(
-    () =>
-      classNames(
-        "ui-input",
-        {
-          "ui-input-password": isTypePassword,
-        },
-        currentClasses.input
-      ),
-    [currentClasses.input, isTypePassword]
-  );
+  const classNameInput = useMemo(() => {
+    const isNotNilIconOrIsPassword = R.or(isNotNilIcon, isTypePassword);
+    const classNamesIconPosition = classNames({
+      "ui-input-icon-position": isNotNilIconOrIsPassword,
+      left: isLeftPosition(iconPosition) && isNotNilIcon,
+      right:
+        R.or(isRightPosition(iconPosition), isTypePassword) &&
+        isNotNilIconOrIsPassword,
+    });
+    return classNames("ui-input", classNamesIconPosition, currentClasses.input);
+  }, [currentClasses.input, isTypePassword, isNotNilIcon, iconPosition]);
 
   const handleChangeHiddenPassword = useCallback(() => {
     setIsHiddenPassword(!isHiddenPassword);
@@ -57,6 +71,14 @@ export const Input = (props) => {
       )
     );
   }, [isTypePassword, handleChangeHiddenPassword, isHiddenPassword]);
+
+  const rendererIcon = useMemo(() => {
+    return isNotNilIcon ? (
+      <div className={classNames("ui-input-icon-wrapper", iconPosition)}>
+        <div className="ui-input-icon">{icon}</div>
+      </div>
+    ) : null;
+  }, [isNotNilIcon, icon, iconPosition]);
 
   const currentType = useMemo(() => {
     return isTypePassword && !isHiddenPassword ? "text" : type;
@@ -74,6 +96,7 @@ export const Input = (props) => {
           value={value}
           onChange={onChange}
         />
+        {rendererIcon}
         {rendererHiddingPassword}
       </div>
     </div>
@@ -92,9 +115,12 @@ Input.propTypes = {
     wrapper: PropsTypes.string,
     input: PropsTypes.string,
   }),
+  icon: PropsTypes.oneOfType([PropsTypes.node, PropsTypes.instanceOf(Element)]),
+  iconPosition: PropsTypes.oneOf(["left", "right"]),
 };
 
 Input.defaultProps = {
   type: "text",
   classes: {},
+  iconPosition: "left",
 };

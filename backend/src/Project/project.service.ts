@@ -1,13 +1,14 @@
 import { Injectable, HttpException, HttpStatus } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
+import { Like } from "typeorm";
+
+import * as R from "ramda";
 
 import { User } from "src/User/user.entity";
 
 import { Project } from "./project.entity";
 import { ProjectRepository } from "./project.repository";
 import CreateProjectDTO from "./dto/create-project.dto";
-import { DeleteResult } from "typeorm";
-import { throws } from "assert";
 
 @Injectable()
 export class ProjectService {
@@ -20,19 +21,21 @@ export class ProjectService {
     user: User;
     page: number;
     limit: number;
+    searchValue: string;
   }): Promise<{ data: Project[]; count: number }> {
-    const { user, page, limit } = query
-  
-    const offset = page && limit ? page * limit : 0
+    const { user, page, limit, searchValue } = query;
+
+    const offset = page && limit ? page * limit : 0;
 
     const [data, count] = await this.projectRepository.findAndCount({
       relations: ["user"],
       where: {
         user,
+        name: Like(`%${R.or(searchValue, "")}%`),
       },
-      order: { "createdAt": "DESC" },
+      order: { createdAt: "DESC" },
       skip: offset,
-      take: limit
+      take: limit,
     });
 
     return {

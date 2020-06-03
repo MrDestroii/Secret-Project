@@ -51,19 +51,19 @@ export const Pagination = (props) => {
     countPerPage,
   ]);
 
-  const configsControlsButtons = useMemo(
-    () => ({
+  const configsControlsButtons = useMemo(() => {
+    const isDisableFunc = R.or(R.equals(0, countPages));
+    return {
       prev: {
-        isDisable: R.equals(page, 0),
+        isDisable: isDisableFunc(R.equals(page, 0)),
         clickValue: isGeneralControls ? 0 : page - 1,
       },
       next: {
-        isDisable: R.equals(page + 1, countPages),
+        isDisable: isDisableFunc(R.equals(page + 1, countPages)),
         clickValue: isGeneralControls ? countPages - 1 : page + 1,
       },
-    }),
-    [page, countPages, isGeneralControls]
-  );
+    };
+  }, [page, countPages, isGeneralControls]);
 
   return (
     <div

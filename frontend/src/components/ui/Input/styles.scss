@@ -20,8 +20,14 @@
   position: relative;
 }
 
-.ui-input-password {
-  padding-right: 25px;
+.ui-input-icon-position {
+  &.right {
+    padding-right: 25px;
+  }
+
+  &.left {
+    padding-left: 25px;
+  }
 }
 
 .ui-hidding-password {
@@ -34,5 +40,27 @@
   & > svg {
     height: 20px;
     width: 20px;
+  }
+}
+
+.ui-input-icon-wrapper {
+  position: absolute;
+  height: 100%;
+  top: 0;
+
+  &.left {
+    left: 0;
+  }
+
+  &.right {
+    right: 0;
+  }
+
+  .ui-input-icon {
+    @extend .d-flex, .align-items-center;
+    position: relative;
+    height: 100%;
+    width: 25px;
+    padding: 3px;
   }
 }
