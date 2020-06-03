@@ -1,13 +1,16 @@
-import { useRef, useCallback } from "react"
+import { useRef, useCallback } from "react";
 
 export const useCallbackWithTimer = (func, delay = 800) => {
-  const timer = useRef()
+  const timer = useRef();
 
-  return useCallback((...args) => {
-    if(timer.current) {
-      clearTimeout(timer.current)
-    }
+  return useCallback(
+    (...args) => {
+      if (timer.current) {
+        clearTimeout(timer.current);
+      }
 
-    timer.current = setTimeout(func, delay, ...args)
-  }, [func, delay])
-}
+      timer.current = setTimeout(func, delay, ...args);
+    },
+    [func, delay]
+  );
+};

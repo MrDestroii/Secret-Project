@@ -1,9 +1,19 @@
-import { takeEvery, put } from "redux-saga/effects";
+import { takeEvery, put, select, call } from "redux-saga/effects";
+
+import * as R from "ramda"
 
 import { api } from "utils/api";
 
 import { projectTypes } from "./types";
 import * as projectActions from "./actions";
+import * as projectSelectors from "./selectors"
+
+function* reloadProjects() {
+  const limit  = yield select(projectSelectors.getLimit)
+  const filters = yield select(projectSelectors.getFilters)
+  const page = yield select(projectSelectors.getPage)
+  yield put(projectActions.getProjects({ page, limit, ...filters }))
+}
 
 function* getProjects(action) {
   const { query } = action.payload
@@ -23,6 +33,14 @@ function* createProject(action) {
 
     yield put(projectActions.createProjectSuccess(createdProject))
 
+    const page = yield select(projectSelectors.getPage)
+
+    if(R.equals(0, page)) {
+      yield call(reloadProjects)
+    } else {
+      yield put(projectActions.setPage(0))
+    }
+
     callback && callback()
   } catch (e) {
     yield put(projectActions.createProjectError(e))
@@ -35,6 +53,8 @@ function* deleteProject(action) {
     const deletedProject = yield api.service('project').remove(id)
 
     yield put(projectActions.deleteProjectSuccess(deletedProject))
+
+    yield call(reloadProjects)
   } catch (e) {
     yield put(projectActions.deleteProjectError(id, e))
   }

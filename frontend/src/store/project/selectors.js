@@ -20,3 +20,9 @@ export const getIsCreateFetching = createSelector(getState, R.prop("isCreateFetc
 export const getIdsIsDeleting = createSelector(getState, R.prop('idsIsDeleting'))
 
 export const getIsUpdateFetching = createSelector(getState, R.prop('isUpdateFetching'))
+
+export const getPage = createSelector(getItems, R.prop("page"))
+
+export const getFilters = createSelector(getState, R.prop("filters"))
+
+export const getLimit = createSelector(getItems, R.prop("limit"))

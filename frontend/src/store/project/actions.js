@@ -63,3 +63,13 @@ export const updateProjectError = (e) => ({
   type: projectTypes.PROJECT_UPDATE_ERROR,
   payload: e,
 });
+
+export const setPage = (page) => ({
+  type: projectTypes.PROJECT_SET_PAGE,
+  payload: page
+})
+
+export const setFilter = (field, value) => ({
+  type: projectTypes.POROJECT_SET_FILTER,
+  payload: { field, value }
+})

@@ -6,6 +6,11 @@ const initialState = {
   items: {
     data: {},
     count: 0,
+    page: 0,
+    limit: 5,
+  },
+  filters: {
+    searchValue: ""
   },
   isGetFetching: false,
   isCreateFetching: false,
@@ -15,6 +20,27 @@ const initialState = {
 
 export const projectReducer = (state = initialState, action) => {
   switch (action.type) {
+    case projectTypes.PROJECT_SET_PAGE: {
+      return {
+        ...state,
+        items: {
+          ...state.items,
+          page: action.payload
+        }
+      }
+    }
+
+    case projectTypes.POROJECT_SET_FILTER: {
+      const { field, value } = action.payload
+      return {
+        ...state,
+        filters: {
+          ...state.filters,
+          [field]: value
+        }
+      }
+    }
+
     case projectTypes.PROJECTS_GET: {
       return {
         ...state,
@@ -33,6 +59,7 @@ export const projectReducer = (state = initialState, action) => {
       return {
         ...state,
         items: {
+          ...state.items,
           data,
           count,
         },
@@ -48,16 +75,8 @@ export const projectReducer = (state = initialState, action) => {
     }
 
     case projectTypes.PROJECT_CREATE_SUCCESS: {
-      const newProject = action.payload;
-
       return {
         ...state,
-        items: {
-          ...state.items,
-          [newProject.id]: {
-            ...newProject,
-          },
-        },
         isCreateFetching: false,
       };
     }
@@ -74,7 +93,6 @@ export const projectReducer = (state = initialState, action) => {
 
       return {
         ...state,
-        items: R.omit([deletedProject.id], state.items),
         idsIsDeleting: R.without([deletedProject.id], state.idsIsDeleting),
       };
     }
@@ -93,8 +111,11 @@ export const projectReducer = (state = initialState, action) => {
         ...state,
         items: {
           ...state.items,
-          [updatedItem.id]: {
-            ...updatedItem,
+          data: {
+            ...state.items.data,
+            [updatedItem.id]: {
+              ...updatedItem,
+            }
           },
         },
         isUpdateFetching: false,

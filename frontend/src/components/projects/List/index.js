@@ -3,7 +3,6 @@ import React, {
   useMemo,
   useCallback,
   useRef,
-  useState,
 } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -13,6 +12,7 @@ import { Panel } from "components/ui/Panel";
 import { Spinner } from "components/ui/Spinner";
 import { Modal } from "components/ui/Modal";
 import { Pagination } from "components/ui/Pagination";
+import { SearchInput } from "components/ui/SearchInput";
 
 import { ButtonCreate } from "./ButtonCreate";
 import { ListItem } from "./ListItem";
@@ -27,28 +27,18 @@ import {
   getIsUpdateFetching,
   getItemsData,
   getItemsCount,
+  getLimit,
+  getPage,
+  getFilters,
 } from "store/project/selectors";
 
 import "./styles.scss";
-import { SearchInput } from "components/ui/SearchInput";
-
-const limit = 5;
 
 export const ProjectsList = () => {
   const refPanel = useRef();
   const refButtonCreate = useRef();
 
-  const [filters, setFilters] = useState({
-    page: 0,
-    searchValue: "",
-    limit,
-  });
-
   const dispatch = useDispatch();
-
-  useEffect(() => {
-    dispatch(projectActions.getProjects(filters));
-  }, [dispatch, filters]);
 
   const items = useSelector(getItemsData);
   const count = useSelector(getItemsCount);
@@ -56,6 +46,18 @@ export const ProjectsList = () => {
   const isCreateFetching = useSelector(getIsCreateFetching);
   const isUpdateFetching = useSelector(getIsUpdateFetching);
   const idsIsDeleting = useSelector(getIdsIsDeleting);
+  const limit = useSelector(getLimit)
+  const page = useSelector(getPage)
+  const filters = useSelector(getFilters)
+
+  const handleGetProjects = useCallback(
+    () => dispatch(projectActions.getProjects({ ...filters, page, limit })),
+    [dispatch, filters, page, limit]
+  );
+
+  useEffect(() => {
+    handleGetProjects();
+  }, [handleGetProjects]);
 
   const handleDeleteProject = useCallback(
     (id) => {
@@ -80,13 +82,20 @@ export const ProjectsList = () => {
 
   const handleChangePage = useCallback(
     (newPage) => {
-      setFilters({
-        ...filters,
-        page: newPage,
-      });
+      dispatch(projectActions.setPage(newPage))
     },
-    [filters]
+    [dispatch]
   );
+
+  const handleResetSearch = useCallback(() => {
+    dispatch(projectActions.setPage(0))
+    dispatch(projectActions.setFilter("searchValue", ""))
+  }, [dispatch])
+
+  const handleSearch = useCallback((value) => {
+    dispatch(projectActions.setPage(0))
+    dispatch(projectActions.setFilter("searchValue", value))
+  }, [dispatch])
 
   const rendererContent = useMemo(() => {
     return isGetFetching ? (
@@ -137,17 +146,17 @@ export const ProjectsList = () => {
     handleUpdateProject,
     isUpdateFetching,
   ]);
-
+  
   const rendererPagination = useMemo(() => {
     return (
       <Pagination
         count={count}
         countPerPage={limit}
-        page={filters.page}
+        page={page}
         onChangePage={handleChangePage}
       />
     );
-  }, [filters.page, count, handleChangePage]);
+  }, [page, count, handleChangePage, limit]);
 
   const rendererCreateModal = useMemo(() => {
     return (
@@ -170,20 +179,8 @@ export const ProjectsList = () => {
         <>
           <ButtonCreate refElem={refPanel} refButton={refButtonCreate} />
           <SearchInput
-            onReset={() => {
-              setFilters({
-                ...filters,
-                searchValue: "",
-                page: 0,
-              });
-            }}
-            onSearch={(value) => {
-              setFilters({
-                ...filters,
-                searchValue: value,
-                page: 0,
-              });
-            }}
+            onReset={handleResetSearch}
+            onSearch={handleSearch}
           />
         </>
       }
