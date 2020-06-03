@@ -4,8 +4,12 @@ import * as R from "ramda";
 
 const getState = R.prop("project");
 
-export const getItems = createSelector(getState, R.prop("items")
+const getItems = createSelector(getState, R.prop("items"))
+
+export const getItemsData = createSelector(getItems, R.prop("data")
 );
+
+export const getItemsCount = createSelector(getItems, R.prop("count"))
 
 export const getIsGetFetching = createSelector(getState, R.prop("isGetFetching")
 );

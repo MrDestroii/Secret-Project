@@ -1,7 +1,8 @@
 import { projectTypes } from "./types";
 
-export const getProjects = () => ({
+export const getProjects = (query) => ({
   type: projectTypes.PROJECTS_GET,
+  payload: { query },
 });
 
 export const getProjectsSuccess = (data) => ({

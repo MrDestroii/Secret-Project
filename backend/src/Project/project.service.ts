@@ -16,13 +16,29 @@ export class ProjectService {
     private readonly projectRepository: ProjectRepository
   ) {}
 
-  findAll(query: { user: User }): Promise<Project[]> {
-    return this.projectRepository.find({
+  async findAll(query: {
+    user: User;
+    page: number;
+    limit: number;
+  }): Promise<{ data: Project[]; count: number }> {
+    const { user, page, limit } = query
+  
+    const offset = page && limit ? page * limit : 0
+
+    const [data, count] = await this.projectRepository.findAndCount({
       relations: ["user"],
       where: {
-        user: query.user,
+        user,
       },
+      order: { "createdAt": "DESC" },
+      skip: offset,
+      take: limit
     });
+
+    return {
+      data,
+      count,
+    };
   }
 
   create(project: CreateProjectDTO, user: User): Promise<Project> {
@@ -37,17 +53,17 @@ export class ProjectService {
     try {
       const currentProject = await this.projectRepository.findOneOrFail(id);
 
-    if (currentProject) {
-      const removedProject = await this.projectRepository.remove(
-        currentProject
-      );
-      return {
-        ...removedProject,
-        id,
-      };
-    }
+      if (currentProject) {
+        const removedProject = await this.projectRepository.remove(
+          currentProject
+        );
+        return {
+          ...removedProject,
+          id,
+        };
+      }
     } catch (error) {
-      throw new HttpException(error.message, HttpStatus.NOT_FOUND)
+      throw new HttpException(error.message, HttpStatus.NOT_FOUND);
     }
   }
 
@@ -58,7 +74,7 @@ export class ProjectService {
         relations: ["user"],
       });
     } catch (error) {
-      throw new HttpException(error.message, HttpStatus.NOT_FOUND)
+      throw new HttpException(error.message, HttpStatus.NOT_FOUND);
     }
   }
 }

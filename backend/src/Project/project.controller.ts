@@ -14,9 +14,10 @@ export class ProjectController {
 
   @UseGuards(JwtAuthGuard)
   @Get()
-  find(@User() user: UserEntity) {
+  find(@User() user: UserEntity, @Query() query: { page: number, limit: number }) {
     return this.projectService.findAll({
-      user
+      user,
+      ...query
     });
   }
 

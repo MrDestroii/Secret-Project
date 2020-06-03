@@ -5,9 +5,10 @@ import { api } from "utils/api";
 import { projectTypes } from "./types";
 import * as projectActions from "./actions";
 
-function* getProjects() {
+function* getProjects(action) {
+  const { query } = action.payload
   try {
-    const projects = yield api.service('project').find();
+    const projects = yield api.service('project').find(query);
 
     yield put(projectActions.getProjectsSuccess(projects));
   } catch (e) {

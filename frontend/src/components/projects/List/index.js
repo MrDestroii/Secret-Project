@@ -1,4 +1,10 @@
-import React, { useEffect, useMemo, useCallback, useRef, useState } from "react";
+import React, {
+  useEffect,
+  useMemo,
+  useCallback,
+  useRef,
+  useState,
+} from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import * as R from "ramda";
@@ -6,6 +12,7 @@ import * as R from "ramda";
 import { Panel } from "components/ui/Panel";
 import { Spinner } from "components/ui/Spinner";
 import { Modal } from "components/ui/Modal";
+import { Pagination } from "components/ui/Pagination";
 
 import { ButtonCreate } from "./ButtonCreate";
 import { ListItem } from "./ListItem";
@@ -14,27 +21,37 @@ import { CreateForm } from "../CreateForm";
 import * as projectActions from "store/project/actions";
 
 import {
-  getItems,
   getIsGetFetching,
   getIsCreateFetching,
   getIdsIsDeleting,
   getIsUpdateFetching,
+  getItemsData,
+  getItemsCount,
 } from "store/project/selectors";
 
 import "./styles.scss";
-import { Pagination } from "components/ui/Pagination";
+
+const limit = 5;
 
 export const ProjectsList = () => {
   const refPanel = useRef();
   const refButtonCreate = useRef();
 
+  const [page, setPage] = useState(0);
+
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(projectActions.getProjects());
-  }, [dispatch]);
+    dispatch(
+      projectActions.getProjects({
+        limit,
+        page,
+      })
+    );
+  }, [dispatch, page]);
 
-  const items = useSelector(getItems);
+  const items = useSelector(getItemsData);
+  const count = useSelector(getItemsCount);
   const isGetFetching = useSelector(getIsGetFetching);
   const isCreateFetching = useSelector(getIsCreateFetching);
   const isUpdateFetching = useSelector(getIsUpdateFetching);
@@ -53,6 +70,15 @@ export const ProjectsList = () => {
     },
     [dispatch]
   );
+
+  const handleCreateProject = useCallback(
+    (callback) => (data) => {
+      dispatch(projectActions.createProject(data, callback));
+    },
+    [dispatch]
+  );
+
+  const handleChangePage = useCallback((newPage) => setPage(newPage), []);
 
   const rendererContent = useMemo(() => {
     return isGetFetching ? (
@@ -96,18 +122,29 @@ export const ProjectsList = () => {
     isUpdateFetching,
   ]);
 
-  const handleOnCreate = useCallback(
-    (callback) => (data) => {
-      dispatch(projectActions.createProject(data, callback));
-    },
-    [dispatch]
-  );
-
-  const [page, setPage] = useState(0)
-
   const rendererPagination = useMemo(() => {
-    return <Pagination count={43} page={page} onChangePage={(newPage) => setPage(newPage)}/>
-  }, [page])
+    return (
+      <Pagination
+        count={count}
+        countPerPage={limit}
+        page={page}
+        onChangePage={handleChangePage}
+      />
+    );
+  }, [page, count, handleChangePage]);
+
+  const rendererCreateModal = useMemo(() => {
+    return (
+      <Modal refButton={refButtonCreate} title="Create Project">
+        {(onChangeOpen) => (
+          <CreateForm
+            onSave={handleCreateProject(onChangeOpen)}
+            isFetching={isCreateFetching}
+          />
+        )}
+      </Modal>
+    );
+  }, [handleCreateProject, isCreateFetching]);
 
   return (
     <Panel
@@ -122,14 +159,7 @@ export const ProjectsList = () => {
     >
       {rendererContent}
       {rendererPagination}
-      <Modal refButton={refButtonCreate} title="Create Project">
-        {(onChangeOpen) => (
-          <CreateForm
-            onSave={handleOnCreate(onChangeOpen)}
-            isFetching={isCreateFetching}
-          />
-        )}
-      </Modal>
+      {rendererCreateModal}
     </Panel>
   );
 };

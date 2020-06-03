@@ -59,7 +59,7 @@ export const api = {
       return {
         get: (id) => basic(serviceName, "get", null, { id }),
         create: (body) => basic(serviceName, "post", body),
-        find: (body) => basic(serviceName, "get", body),
+        find: (query) => basic(serviceName, "get", null, query),
         remove: id => basic(serviceName, "delete", null, { id }),
         update: (id, body) => basic(serviceName, "put", body, { id }),
       };

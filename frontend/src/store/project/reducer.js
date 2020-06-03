@@ -3,7 +3,10 @@ import { projectTypes } from "./types";
 import * as R from "ramda";
 
 const initialState = {
-  items: {},
+  items: {
+    data: {},
+    count: 0,
+  },
   isGetFetching: false,
   isCreateFetching: false,
   idsIsDeleting: [],
@@ -20,10 +23,19 @@ export const projectReducer = (state = initialState, action) => {
     }
 
     case projectTypes.PROJECTS_GET_SUCCESS: {
-      const items = R.indexBy(R.prop("id"), action.payload);
+
+      const data = R.compose(
+        R.indexBy(R.prop("id")),
+        R.propOr([], "data")
+      )(action.payload);
+      const count = R.propOr(R.length(data), "count")(action.payload);
+
       return {
         ...state,
-        items,
+        items: {
+          data,
+          count,
+        },
         isGetFetching: false,
       };
     }
@@ -107,8 +119,8 @@ export const projectReducer = (state = initialState, action) => {
     case projectTypes.PROJECT_UPDATE_ERROR: {
       return {
         ...state,
-        isUpdateFetching: false
-      }
+        isUpdateFetching: false,
+      };
     }
 
     default:
